@@ -10,9 +10,9 @@ VERSION_DIR=$1
 
 cd $VERSION_DIR
 
-echo "-------------------------------------------------"
-echo $PWD
-echo "-------------------------------------------------"
+printf "-------------------------------------------------\n"
+printf "PWD: $PWD\n"
+printf "-------------------------------------------------\n"
 
 subdir=$(basename $PWD)
 
@@ -93,7 +93,7 @@ if [ "$ipstat" != "non_connesso" ]; then
 		printf '.'
 		sleep 20
 	done
-	printf "Conneted to statistics service \n"
+	printf "Connected to statistics service \n"
 fi
 
 
@@ -103,7 +103,7 @@ if [ "$ipacc" != "non_connesso" ]; then
 		printf '.'
 		sleep 20
 	done
-	printf "Conneted to account service \n"
+	printf "Connected to account service \n"
 fi
 
 
@@ -113,7 +113,7 @@ if [ "$ipnot" != "non_connesso" ]; then
 		printf '.'
 		sleep 20
 	done
-	printf "Conneted to notification service \n"
+	printf "Connected to notification service \n"
 fi
 
 
@@ -123,22 +123,22 @@ if [ "$ipauth" != "non_connesso" ]; then
 		printf '.'
 		sleep 20
 	done
-	printf "Conneted to auth service \n"
+	printf "Connected to auth service \n"
 fi
 
 interfaccia=$(brctl show | awk 'NF>1 && NR>1 {print $1}' | grep br-)
 
-printf "We are going to capture interface: $interfaccia"
+printf "We are going to capture interface: $interfaccia\n\n"
 
-echo "-------------------------------------------------"
-echo $PWD
-echo "-------------------------------------------------"
+printf "-------------------------------------------------\n"
+printf "PWD: $PWD\n"
+printf "-------------------------------------------------\n"
 
 cd ../..
 
-echo "-------------------------------------------------"
-echo $PWD
-echo "-------------------------------------------------"
+printf "-------------------------------------------------\n"
+printf "PWD: $PWD\n"
+printf "-------------------------------------------------\n"
 
 cd Test
 

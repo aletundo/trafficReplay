@@ -12,9 +12,9 @@ VERSION_DIR=$1
 
 cd $VERSION_DIR
 
-echo "-------------------------------------------------"
-echo $PWD
-echo "-------------------------------------------------"
+printf "-------------------------------------------------\n"
+printf "PWD: $PWD\n"
+printf "-------------------------------------------------\n"
 
 if [ -z "$( find * -type d -name 'Test*' )" ]; then
 	echo "Nessun test per questa cartella"
@@ -26,9 +26,9 @@ unset name
 ls -d Test* -v
 
 for name in $( ls -d Test* -v ); do
-	echo "-----------------------"
-	echo $name
-	echo "-----------------------"
+	printf "-------------------------------------------------\n"
+	printf "Test name: $name\n"
+	printf "-------------------------------------------------\n"
 	./split.sh $name/interaction.pcap $name/SplitRest
 	./split_mongo.sh $name/interaction.pcap $name/SplitMongo
 done
@@ -44,27 +44,27 @@ cd ..
 unset name
 
 for name in  $( ls -d Test* -v ); do
-	echo "-----------------------"
-	echo $name
-	echo "-----------------------"
+	printf "-------------------------------------------------\n"
+	printf "Test name: $name\n"
+	printf "-------------------------------------------------\n"
 	./generate_test_replay.sh SplitMongo $name
 done
 
 cd piggymetrics
 docker-compose down
 
-echo "-------------------------------------------------"
-echo $PWD
-echo "-------------------------------------------------"
+printf "-------------------------------------------------\n"
+printf "PWD: $PWD\n"
+printf "-------------------------------------------------\n"
 
 cd ..
 unset name
 
 #for dirname in $( find * -type d -maxdepth 1 -name 'Test*'  | sort -z  ); do
 for name in  $( ls -d Test* -v ); do
-	echo "-----------------------"
-	echo $name
-	echo "-----------------------"
+	printf "-------------------------------------------------\n"
+	printf "Test name: $name\n"
+	printf "-------------------------------------------------\n"
 	while read mongo_cont; do
 		IFS=';'
 		read -ra mongo_info <<< "$mongo_cont"
