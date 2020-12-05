@@ -23,8 +23,6 @@ fi
 
 unset name
 
-sudo chmod 774 Test*
-
 ls -d Test* -v
 
 for name in $( ls -d Test* -v ); do
