@@ -31,7 +31,7 @@ docker ps --format "{{.Names}}" > "list_names_mongo_containers.txt"
 #LEggo da un file contenente tutti i nomi dei container mongo che voglio considerare
 
 while read name; do
-    	name_mongo_cont=$name
+    name_mongo_cont=$name
 	echo "nome del container = $name_mongo_cont"
 	id_mongocontainer=$(docker ps -aqf "name="$name_mongo_cont)
 	inspect=$(docker inspect $id_mongocontainer | grep "IPAddress")

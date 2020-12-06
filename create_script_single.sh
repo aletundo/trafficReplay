@@ -23,17 +23,23 @@ fi
 
 unset name
 
+sudo chmod 777 Test*
+
 ls -d Test* -v
 
 for name in $( ls -d Test* -v ); do
 	printf -- "-------------------------------------------------\n"
 	printf "Test name: $name\n"
 	printf -- "-------------------------------------------------\n"
+	printf "Splitting REST"
 	./split.sh $name/interaction.pcap $name/SplitRest
+	printf "Splitting MongoDB"
 	./split_mongo.sh $name/interaction.pcap $name/SplitMongo
 done
 
+printf "Generating REST replay scripts"
 ./CreateTestPy.sh 1 25
+printf "Generating Python complete test script"
 ./automatic_union.sh 1 25
 
 cd piggymetrics
@@ -43,6 +49,7 @@ sleep 10
 cd ..
 unset name
 
+printf "Generating MongoDB replay scripts"
 for name in  $( ls -d Test* -v ); do
 	printf -- "-------------------------------------------------\n"
 	printf "Test name: $name\n"
@@ -59,6 +66,8 @@ printf -- "-------------------------------------------------\n"
 
 cd ..
 unset name
+
+printf "Generating Auth mock"
 
 #for dirname in $( find * -type d -maxdepth 1 -name 'Test*'  | sort -z  ); do
 for name in  $( ls -d Test* -v ); do
@@ -96,6 +105,9 @@ done
 chmod +x auth-mock-response-acc.sh
 chmod +x auth-mock-response-stat.sh
 chmod +x auth-mock-response-not.sh
+
+printf "Generating test suites"
+
 ./automatic_copy.sh 1 25 Account
 ./automatic_copy.sh 1 25 Statistics
 ./automatic_copy.sh 1 25 Notification
