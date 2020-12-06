@@ -31,15 +31,15 @@ for name in $( ls -d Test* -v ); do
 	printf -- "-------------------------------------------------\n"
 	printf "Test name: $name\n"
 	printf -- "-------------------------------------------------\n"
-	printf "Splitting REST"
+	printf "Splitting REST\n"
 	./split.sh $name/interaction.pcap $name/SplitRest
-	printf "Splitting MongoDB"
+	printf "Splitting MongoDB\n"
 	./split_mongo.sh $name/interaction.pcap $name/SplitMongo
 done
 
-printf "Generating REST replay scripts"
+printf "Generating REST replay scripts\n"
 ./CreateTestPy.sh 1 25
-printf "Generating Python complete test script"
+printf "Generating Python complete test script\n"
 ./automatic_union.sh 1 25
 
 cd piggymetrics
@@ -49,7 +49,7 @@ sleep 10
 cd ..
 unset name
 
-printf "Generating MongoDB replay scripts"
+printf "Generating MongoDB replay scripts\n"
 for name in  $( ls -d Test* -v ); do
 	printf -- "-------------------------------------------------\n"
 	printf "Test name: $name\n"
@@ -67,7 +67,7 @@ printf -- "-------------------------------------------------\n"
 cd ..
 unset name
 
-printf "Generating Auth mock"
+printf "Generating Auth mock\n"
 
 #for dirname in $( find * -type d -maxdepth 1 -name 'Test*'  | sort -z  ); do
 for name in  $( ls -d Test* -v ); do
@@ -106,7 +106,7 @@ chmod +x auth-mock-response-acc.sh
 chmod +x auth-mock-response-stat.sh
 chmod +x auth-mock-response-not.sh
 
-printf "Generating test suites"
+printf "Generating test suites\n"
 
 ./automatic_copy.sh 1 25 Account
 ./automatic_copy.sh 1 25 Statistics
