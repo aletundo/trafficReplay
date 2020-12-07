@@ -58,7 +58,7 @@ for name in  $( ls -d Test* -v ); do
 done
 
 cd piggymetrics
-docker-compose down
+docker-compose stop
 
 printf -- "-------------------------------------------------\n"
 printf "PWD: $PWD\n"
