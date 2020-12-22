@@ -1,23 +1,25 @@
 #Per unire tutti gli script python di test in un unico test
 #./union_scripts TestDir SplitRest
 
-if [[ $# -lt 1 ]] ; then 
+if [[ $# -lt 1 ]] ; then
 	echo 'missing args ---> ./union_scripts.sh <TestDir/SplitRest/AppRestDir>'
 	exit 1
 fi
 
 cd $1
 
+echo "Unifying Python tests in a single test file into: $1"
+
 if [ -f "test_complete.py" ]; then
 	rm -f "test_complete.py"
 fi
 
-if [ ! -d "TestComplete" ]; 
-then 
-	mkdir -p "TestComplete"; 
+if [ ! -d "TestComplete" ];
+then
+	mkdir -p "TestComplete";
 fi
 echo $( ls -v *.py | wc -c )
-if [ $( ls -v *.py | wc -c ) -ne 0 ]; then 
+if [ $( ls -v *.py | wc -c ) -ne 0 ]; then
   	echo "import requests" > ./TestComplete/test_complete.py
 	echo "import json" >> ./TestComplete/test_complete.py
 	echo "import time" >> ./TestComplete/test_complete.py
@@ -41,7 +43,7 @@ if [ $( ls -v *.py | wc -c ) -ne 0 ]; then
 	echo "else:" >> ./TestComplete/test_complete.py
 	echo -e "\texit(0)" >> ./TestComplete/test_complete.py
 else
-	echo "vuoto"
+	echo "There are no test scripts"
 fi
 
 

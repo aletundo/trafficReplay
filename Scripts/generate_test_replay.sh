@@ -10,12 +10,12 @@ fi
 # First execute mong replay for the files in the folder
 cd $2/$1
 
+echo "Executing mongoreplay for files in $2/$1"
+
 for filename in $( ls -v *.cap ); do
 	name=${filename%%.cap*}
-	ip_mongo_cont=$( sed '1q;d' $name.txt ) 
-	echo ""
-	echo ""
-	echo "ip vecchio = $ip_mongo_cont"
+	ip_mongo_cont=$( sed '1q;d' $name.txt )
+	echo "Old Mongo container IP: $ip_mongo_cont"
 	trovato=0
 	while read mongo_cont; do
 		IFS=';'
@@ -27,7 +27,7 @@ for filename in $( ls -v *.cap ); do
 			#echo "nome2 = "${mongo_info[0]}
 			all_name=${mongo_info[0]}
 			part_of_name="${all_name%_*}"
-			echo $part_of_name
+			echo "Part for name: $part_of_name"
 			#id_mongocontainer=$(docker ps | grep $part_of_name | awk '{print $1}')
 			#echo $id_mongocontainer
 			#echo "id container = "$id_mongocontainer
@@ -39,63 +39,63 @@ for filename in $( ls -v *.cap ); do
 			#ipdb=${ipdb##*:}
 			#ipdb=${ipdb##* }
 			#ipdb="$(echo -e "${ipdb}" | tr -d '[:space:]')"
-			echo "ip container = "$ipdb
+			echo "Mongo container IP found: $ipdb"
 			trovato=1
 			break;
 		fi
 	done < "../name_ip_mongo.txt"
 	if [[ $trovato == 1 ]];
 	then
-		if [ ! -d ${mongo_info[0]} ]; 
-		then 
-			mkdir ${mongo_info[0]}; 
+		if [ ! -d ${mongo_info[0]} ];
+		then
+			mkdir ${mongo_info[0]};
 		fi
 		cd ${mongo_info[0]}
-		if [ ! -d "recordings" ]; 
-		then 
-			mkdir "recordings"; 
+		if [ ! -d "recordings" ];
+		then
+			mkdir "recordings";
 		fi
 
-		if [ ! -d "reports" ]; 
-		then 
-			mkdir "reports"; 
+		if [ ! -d "reports" ];
+		then
+			mkdir "reports";
 		fi
 
 		cd reports
 
-		if [ ! -d "CMDs" ]; 
-		then 
-			mkdir "CMDs"; 
+		if [ ! -d "CMDs" ];
+		then
+			mkdir "CMDs";
 		fi
 
-		if [ ! -d "Config" ]; 
-		then 
-			mkdir "Config"; 
+		if [ ! -d "Config" ];
+		then
+			mkdir "Config";
 		fi
 
 		cd ..
 
-		if [ ! -d "monitor" ]; 
-		then 
-			mkdir "monitor"; 
+		if [ ! -d "monitor" ];
+		then
+			mkdir "monitor";
 		fi
 		cd ..
 		mongoreplay record -f $filename -p ../$1/${mongo_info[0]}/recordings/test_$name.bson
 		# Create a folder with reports of control packets and another one with database packets
-		if  ! ([[ $name == *"find"* ]] || [[ $name == *"delete"* ]] || [[ $name == *"update"* ]] || [[ $name == *"insert"* ]] || [[ $name == *"count"* ]]); 		
+		if  ! ([[ $name == *"find"* ]] || [[ $name == *"delete"* ]] || [[ $name == *"update"* ]] || [[ $name == *"insert"* ]] || [[ $name == *"count"* ]]);
 		then
-			echo "replay di ../$1/${mongo_info[0]}/recordings/test_$name.bson"
+			echo "Play of ../$1/${mongo_info[0]}/recordings/test_$name.bson"
 			mongoreplay play -p ../$1/${mongo_info[0]}/recordings/test_$name.bson --report ../$1/${mongo_info[0]}/reports/Config/test-$name.json --collect json --host mongodb://user:mongo@$ipdb:27017/piggymetrics
 			 # remove file if empty
 			if [ ! -s ../$1/${mongo_info[0]}/reports/Config/test-$name.json ];
 			then
-				echo "rimozione di test-$name.json"
+				echo "Removing test-$name.json"
 				rm -f ../$1/${mongo_info[0]}/reports/Config/test-$name.json
 			fi
 		else
 			mongoreplay play -p ../$1/${mongo_info[0]}/recordings/test_$name.bson --report ../$1/${mongo_info[0]}/reports/CMDs/test-$name.json --collect json --host mongodb://user:mongo@$ipdb:27017/piggymetrics
 		fi
-		echo "--------> faccio il monitor di ../$1/${mongo_info[0]}/recordings/test_$name.bson"
+		echo "Monitor of ../$1/${mongo_info[0]}/recordings/test_$name.bson"
 		mongoreplay monitor -p ../$1/${mongo_info[0]}/recordings/test_$name.bson --report ../$1/${mongo_info[0]}/monitor/monitoring-$name.json --collect json
 	fi
 done

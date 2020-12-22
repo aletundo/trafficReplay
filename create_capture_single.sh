@@ -144,7 +144,7 @@ cd Test
 
 sleep 30
 
-sudo ./automatic_capture.sh $interfaccia acc_$ipacc auth_$ipauth stat_$ipstat not_$ipnot $subdir > ../$subdir/risultato.txt
+sudo ./automatic_capture.sh $interfaccia acc_$ipacc auth_$ipauth stat_$ipstat not_$ipnot $subdir
 
 cd ..
 

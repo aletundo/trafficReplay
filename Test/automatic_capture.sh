@@ -1,4 +1,4 @@
-#!/bin/bash  
+#!/bin/bash
 
 #1: interfaccia
 #2: finale ip account
@@ -7,7 +7,7 @@
 #5: finale ip notification
 #6: cartella versione
 echo "-----------------------------------> $#"
-if [[ $# -lt 3 ]] ; then 
+if [[ $# -lt 3 ]] ; then
 	echo 'missing args ---> ./automatic_capture.sh <interface> <name:ip> [<name:ip>] [<name:ip>] <Cartella>'
 	exit 1
 fi
@@ -18,7 +18,7 @@ statip=''
 notip=''
 authip=''
 
-if [[ $# -eq 6 ]] ; then 
+if [[ $# -eq 6 ]] ; then
 	IFS='_' read -ra ADDR <<< "$2"
 	echo "-----------____________"${ADDR[0]}
 	if [[ ${ADDR[0]} == "acc" ]];then
@@ -27,7 +27,7 @@ if [[ $# -eq 6 ]] ; then
 		statip=${ADDR[1]}
 	elif [[ ${ADDR[0]} == "not" ]];then
 		notip=${ADDR[1]}
-	else	
+	else
 	    	authip=${ADDR[1]}
 	fi
 	IFS='_' read -ra ADDR <<< "$3"
@@ -37,7 +37,7 @@ if [[ $# -eq 6 ]] ; then
 		statip=${ADDR[1]}
 	elif [[ ${ADDR[0]} == "not" ]];then
 		notip=${ADDR[1]}
-	else	
+	else
 	   	authip=${ADDR[1]}
 	fi
 	IFS='_' read -ra ADDR <<< "$4"
@@ -47,7 +47,7 @@ if [[ $# -eq 6 ]] ; then
 		statip=${ADDR[1]}
 	elif [[ ${ADDR[0]} == "not" ]];then
 		notip=${ADDR[1]}
-	else	
+	else
 	   	authip=${ADDR[1]}
 	fi
 	IFS='_' read -ra ADDR <<< "$5"
@@ -57,20 +57,19 @@ if [[ $# -eq 6 ]] ; then
 		statip=${ADDR[1]}
 	elif [[ ${ADDR[0]} == "not" ]];then
 		notip=${ADDR[1]}
-	else	
+	else
 	   	authip=${ADDR[1]}
 	fi
 	cartella=$6
 fi
 
-echo "----------qua--------"$cartella
-echo $accip
-echo $statip
-echo $notip
-echo $authip
+echo "Account Service IP: ${accip}"
+echo "Statistics Service IP: ${statip}"
+echo "Notification Service IP: ${notip}"
+echo "Authorization Service IP: ${authip}"
 
 
-#start a process in the background (it happens to be a TCP HTTP sniffer on  the loopback interface, for my apache server):   
+#start a process in the background (it happens to be a TCP HTTP sniffer on  the loopback interface, for my apache server):
 function parse_json()
 {
     echo $1 | \
@@ -99,9 +98,9 @@ if [ ! $accip == '' ]; then
 	echo "response:$response" & sleep 5
 	response=$(curl -d @UtenteTest1.json --header "Authorization: Bearer $token" -H "Content-Type: application/json" -X PUT http://$accip:6000/accounts/current)
 	echo "response:$response" & sleep 5
-	#now interrupt the process.  get its PID:  
-	pid=$(ps -e | pgrep tcpdump)  
-	#interrupt it:  
+	#now interrupt the process.  get its PID:
+	pid=$(ps -e | pgrep tcpdump)
+	#interrupt it:
 	kill -2 $pid
 
 
@@ -121,7 +120,7 @@ if [ ! $accip == '' ]; then
 	echo "response:$response" & sleep 5
 	response=$(curl --header "Authorization: Bearer $token2" -X GET  http://$accip:6000/accounts/current)
 	echo "response:$response" & sleep 5
-	pid=$(ps -e | pgrep tcpdump)  
+	pid=$(ps -e | pgrep tcpdump)
 	kill -2 $pid
 
 
@@ -131,8 +130,8 @@ if [ ! $accip == '' ]; then
 	echo "response:$response" & sleep 5
 	response=$(curl -d @UtenteTest2.json --header "Authorization: Bearer $token2" -H "Content-Type: application/json" -X PUT http://$accip:6000/accounts/current)
 	echo "response:$response" & sleep 5
-	pid=$(ps -e | pgrep tcpdump)  
-	kill -2 $pid		 
+	pid=$(ps -e | pgrep tcpdump)
+	kill -2 $pid
 
 	./capture_script.sh ../$cartella/Test4 interaction.pcap $1 &
 	echo "response:$response" & sleep 5
@@ -144,21 +143,21 @@ if [ ! $accip == '' ]; then
 	echo "response:$response" & sleep 5
 	response=$(curl -H "Accept: application/json" --header "Authorization: Bearer $token1" -X GET http://$accip:6000/accounts/Test2)
 	echo "response:$response" & sleep 5
-	pid=$(ps -e | pgrep tcpdump)  
+	pid=$(ps -e | pgrep tcpdump)
 	kill -2 $pid
 
 	./capture_script.sh ../$cartella/Test5 interaction.pcap $1 &
 	echo "response:$response" & sleep 5
 	response=$(curl -d @UtenteTest1.json --header "Authorization: Bearer $token1" -H "Content-Type: application/json" -X PUT http://$accip:6000/accounts/current)
 	echo "response:$response" & sleep 5
-	pid=$(ps -e | pgrep tcpdump)  
+	pid=$(ps -e | pgrep tcpdump)
 	kill -2 $pid
 
 	./capture_script.sh ../$cartella/Test6 interaction.pcap $1 &
 	echo "response:$response" & sleep 5
 	response=$(curl -H "Accept: application/json" --header "Authorization: Bearer $token1" -X GET http://$accip:6000/accounts/Test5)
 	echo "response:$response" & sleep 5
-	pid=$(ps -e | pgrep tcpdump)  
+	pid=$(ps -e | pgrep tcpdump)
 	kill -2 $pid
 
 	./capture_script.sh ../$cartella/Test7 interaction.pcap $1 &
@@ -171,7 +170,7 @@ if [ ! $accip == '' ]; then
 	echo "response:$response" & sleep 5
 	response=$(curl -d '{"username":"Test","password":"prova"}' -H "Content-Type: application/json" -X POST http://$accip:6000/accounts/)
 	echo "response:$response" & sleep 5
-	pid=$(ps -e | pgrep tcpdump)  
+	pid=$(ps -e | pgrep tcpdump)
 	kill -2 $pid
 
 	./capture_script.sh ../$cartella/Test8 interaction.pcap $1 &
@@ -181,7 +180,7 @@ if [ ! $accip == '' ]; then
 	echo "response:$response" & sleep 5
 	response=$(curl -d @UtenteTest_NoSaving.json --header "Authorization: Bearer $token1" -H "Content-Type: application/json" -X PUT http://$accip:6000/accounts/curren)
 	echo "response:$response" & sleep 5
-	pid=$(ps -e | pgrep tcpdump)  
+	pid=$(ps -e | pgrep tcpdump)
 	kill -2 $pid
 
 	./capture_script.sh ../$cartella/Test9 interaction.pcap $1 &
@@ -210,8 +209,8 @@ if [ ! $accip == '' ]; then
 	echo "response:$response" & sleep 5
 	response=$(curl -d @UtenteTest_NoteGrandi.json --header "Authorization: Bearer $token1" -H "Content-Type: application/json" -X PUT http://$accip:6000/accounts/current)
 	echo "response:$response" & sleep 5
-	pid=$(ps -e | pgrep tcpdump)  
-	kill -2 $pid		
+	pid=$(ps -e | pgrep tcpdump)
+	kill -2 $pid
 
 	./capture_script.sh ../$cartella/Test10 interaction.pcap $1 &
 	echo "response:$response" & sleep 5
@@ -222,7 +221,7 @@ if [ ! $accip == '' ]; then
 	echo "response:$response" & sleep 5
 	response=$(curl -H "Accept: application/json" --header "Authorization: Bearer $token1" -X GET http://$accip:6000/accounts/curren)
 	echo "response:$response" & sleep 5
-	pid=$(ps -e | pgrep tcpdump)  
+	pid=$(ps -e | pgrep tcpdump)
 	kill -2 $pid
 
 
@@ -252,7 +251,7 @@ if [ ! $accip == '' ]; then
 	echo "response:$response" & sleep 5
 	response=$(curl -d @UtenteTest_IncTitle20.json --header "Authorization: Bearer $token2" -H "Content-Type: application/json" -X PUT http://$accip:6000/accounts/current)
 	echo "response:$response" & sleep 5
-	pid=$(ps -e | pgrep tcpdump)  
+	pid=$(ps -e | pgrep tcpdump)
 	kill -2 $pid
 
 
@@ -278,7 +277,7 @@ if [ ! $accip == '' ]; then
 	echo "response:$response" & sleep 5
 	response=$(curl -d @UtenteTest_IncTitle21.json --header "Authorization: Bearer $token" -H "Content-Type: application/json" -X PUT http://$accip:6000/accounts/current)
 	echo "response:$response" & sleep 5
-	pid=$(ps -e | pgrep tcpdump)  
+	pid=$(ps -e | pgrep tcpdump)
 	kill -2 $pid
 
 fi
@@ -298,7 +297,7 @@ if [ ! $statip == '' ]; then
 	echo "response:$response" & sleep 5
 	response=$(curl -d @UtenteTest1.json  --header "Authorization: Bearer $token3" -H "Content-Type: application/json" -X PUT http://$statip:7000/statistics/Test2)
 	echo "response:$response" & sleep 5
-	pid=$(ps -e | pgrep tcpdump)  
+	pid=$(ps -e | pgrep tcpdump)
 	kill -2 $pid
 
 
@@ -310,14 +309,14 @@ if [ ! $statip == '' ]; then
 	echo "response:$response" & sleep 5
 	response=$(curl -d @UtenteTest2.json  --header "Authorization: Bearer $token" -H "Content-Type: application/json" -X PUT http://$statip:7000/statistics/Test2)
 	echo "response:$response" & sleep 5
-	pid=$(ps -e | pgrep tcpdump)  
+	pid=$(ps -e | pgrep tcpdump)
 	kill -2 $pid
 
 
 	./capture_script.sh ../$cartella/Test15 interaction.pcap $1 &
 	echo "response:$response" & sleep 5
 	response=$(curl -H "Accept: application/json" --header "Authorization: Bearer $token" -X GET http://$statip:7000/statistics/Test5)
-	pid=$(ps -e | pgrep tcpdump)  
+	pid=$(ps -e | pgrep tcpdump)
 	echo "response:$response" & sleep 5
 	kill -2 $pid
 
@@ -326,7 +325,7 @@ if [ ! $statip == '' ]; then
 	echo "response:$response" & sleep 5
 	response=$(curl -d @UtenteTest1.json  --header "Authorization: Bearer $token" -H "Content-Type: application/json" -X PUT http://$statip:7000/statistics/Test6)
 	echo "response:$response" & sleep 5
-	pid=$(ps -e | pgrep tcpdump)  
+	pid=$(ps -e | pgrep tcpdump)
 	kill -2 $pid
 
 
@@ -352,7 +351,7 @@ if [ ! $statip == '' ]; then
 	echo "response:$response" & sleep 5
 	response=$(curl -d @UtenteTest_NoIncTitle.json --header "Authorization: Bearer $token" -H "Content-Type: application/json" -X PUT http://$statip:7000/statistics/TestParametri)
 	echo "response:$response" & sleep 5
-	pid=$(ps -e | pgrep tcpdump)  
+	pid=$(ps -e | pgrep tcpdump)
 	kill -2 $pid
 
 
@@ -366,7 +365,7 @@ if [ ! $statip == '' ]; then
 	echo "response:$response" & sleep 5
 	response=$(curl -d @UtenteTest2.json  --header "Authorization: Bearer $token" -H "Content-Type: application/json" -X PUT http://$statip:7000/stistics/Test1)
 	echo "response:$response" & sleep 5
-	pid=$(ps -e | pgrep tcpdump)  
+	pid=$(ps -e | pgrep tcpdump)
 	kill -2 $pid
 
 
@@ -382,7 +381,7 @@ if [ ! $statip == '' ]; then
 	echo "response:$response" & sleep 5
 	response=$(curl -d @UtenteTest_IncTitle20.json --header "Authorization: Bearer $token" -H "Content-Type: application/json" -X PUT http://$statip:7000/statistics/TestLimite1)
 	echo "response:$response" & sleep 5
-	pid=$(ps -e | pgrep tcpdump)  
+	pid=$(ps -e | pgrep tcpdump)
 	kill -2 $pid
 
 
@@ -398,11 +397,11 @@ if [ ! $statip == '' ]; then
 	echo "response:$response" & sleep 5
 	response=$(curl -d @UtenteTest_IncTitle21.json --header "Authorization: Bearer $token" -H "Content-Type: application/json" -X PUT http://$statip:7000/statistics/TestLimite1)
 	echo "response:$response" & sleep 5
-	pid=$(ps -e | pgrep tcpdump)  
+	pid=$(ps -e | pgrep tcpdump)
 	kill -2 $pid
 fi
 
-		
+
 
 
 #-----------------------------------------------------------------------------------------------------NOTIFICATION_SERVICE:
@@ -416,21 +415,21 @@ if [ ! $notip == '' ]; then
 	echo "response:$response" & sleep 5
 	response=$(curl -H "Accept: application/json" --header "Authorization: Bearer $token" -X GET http://$notip:8000/notifications/recipients/current)
 	echo "response:$response" & sleep 5
-	pid=$(ps -e | pgrep tcpdump) 
+	pid=$(ps -e | pgrep tcpdump)
 	kill -2 $pid
 
 	./capture_script.sh ../$cartella/Test22 interaction.pcap $1 &
 	echo "response:$response" & sleep 5
 	response=$(curl -H "Accept: application/json" --header "Authorization: Bearer $token" -X GET http://$notip:8000/notifications/recipients/current)
 	echo "response:$response" & sleep 5
-	pid=$(ps -e | pgrep tcpdump)  
+	pid=$(ps -e | pgrep tcpdump)
 	kill -2 $pid
 
 	./capture_script.sh ../$cartella/Test23 interaction.pcap $1 &
 	echo "response:$response" & sleep 5
 	response=$(curl -d '{"accountName":"Test2","email":"l.ussi@campus.unimib.com","scheduledNotifications":{"REMIND":{"active":true,"frequency":"MONTHLY","lastNotified":"2019-01-18T15:25:48.545+0000"}}}' --header "Authorization: $token" -H "Content-Type: application/json" -X PUT http://$notip:8000/notifications/recipients/current)
 	echo "response:$response" & sleep 5
-	pid=$(ps -e | pgrep tcpdump)  
+	pid=$(ps -e | pgrep tcpdump)
 	kill -2 $pid
 
 	./capture_script.sh ../$cartella/Test24 interaction.pcap $1 &
@@ -443,7 +442,7 @@ if [ ! $notip == '' ]; then
 	echo "response:$response" & sleep 5
 	response=$(curl -d '{"accountName":"TestParametri","email":"l.ussi@campus.unimib.com","scheduledNotifications":{"REMIND":{"active":true,"lastNotified":"2019-01-18T15:25:48.545+0000"}}}' --header "Authorization: Bearer $token" -H "Content-Type: application/json" -X PUT http://$notip:8000/notifications/recipients/current)
 	echo "response:$response" & sleep 5
-	pid=$(ps -e | pgrep tcpdump)  
+	pid=$(ps -e | pgrep tcpdump)
 	kill -2 $pid
 
 	./capture_script.sh ../$cartella/Test25 interaction.pcap $1 &
@@ -454,6 +453,6 @@ if [ ! $notip == '' ]; then
 	echo "response:$response" & sleep 5
 	response=$(curl -H "Accept: application/json" --header "Authorization: Bearer $token" -X GET http://$notip:8000/notifications/recipients/curre)
 	echo "response:$response" & sleep 5
-	pid=$(ps -e | pgrep tcpdump)  
+	pid=$(ps -e | pgrep tcpdump)
 	kill -2 $pid
 fi

@@ -17,7 +17,7 @@ printf "PWD: $PWD\n"
 printf -- "-------------------------------------------------\n"
 
 if [ -z "$( find * -type d -name 'Test*' )" ]; then
-	echo "Nessun test per questa cartella"
+	echo "No Tests for this directory"
 	exit 1
 fi
 
@@ -37,7 +37,7 @@ for name in $( ls -d Test* -v ); do
 	./split_mongo.sh $name/interaction.pcap $name/SplitMongo
 done
 
-printf "Generating REST replay scripts\n"
+printf "Generating Python test scripts\n"
 ./CreateTestPy.sh 1 25
 printf "Generating Python complete test script\n"
 ./automatic_union.sh 1 25
@@ -90,10 +90,10 @@ for name in  $( ls -d Test* -v ); do
 			old_ip_acc=${mongo_info[1]}
 		fi
 	done < "$name/name_ip_mongo.txt"
-	echo $old_ip_auth $old_ip_acc
-	echo $old_ip_auth $old_ip_stat
-	echo $old_ip_auth $old_ip_not
-	echo $name
+	echo "Old Auth Service IP: $old_ip_auth"
+	echo "Old Account Service IP: $old_ip_acc"
+	echo "Old Statistics Service IP: $old_ip_stat"
+	echo "Old Notification Service IP: $old_ip_not"
 	python3 extract_http_data.py $name/interaction.pcap $old_ip_auth $old_ip_acc auth-mock-response-acc.json
 	python3 extract_http_data.py $name/interaction.pcap $old_ip_auth $old_ip_stat auth-mock-response-stat.json
 	python3 extract_http_data.py $name/interaction.pcap $old_ip_auth $old_ip_not auth-mock-response-not.json
