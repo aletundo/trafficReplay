@@ -35,7 +35,7 @@ else
 	elements=$(tshark -r $1  -T fields -e ip.src -e ip.dst -e tcp.port -e mongo.element.name -e mongo.opcode -e mongo.request_id -E separator=';')
 fi
 #echo $elements
-echo "Split..."
+echo "Splitting..."
 for element in $elements
 do
 	IFS=';' # space is set as delimiter

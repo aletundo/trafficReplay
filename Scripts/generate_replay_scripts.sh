@@ -22,13 +22,10 @@ fi
 
 for filename in $( ls -v *.cap ); do
     destScript=$2"/"$filename"_replay.py"
-    listIP="${@:3:$((($#-2)))}"
-	listIP=$(echo ${listIP// /,})
-	#echo $listIP
-	#echo $listPass
-	# Pass a string as argument and process it with python
-	echo "Generating $filename $destScript for IPs under test ${listIP[*]}"
-    python3 ../../pyshark_test.py $filename $destScript $listIP
+    portList="${@:3:$((($#-2)))}"
+	portList=$(echo ${portList// /,})
+	echo "Trying to generate $destScript filtering on ports ports ${portList[*]}"
+    python3 ../../pyshark_test.py $filename $destScript $portList
 done
 
 exit 0

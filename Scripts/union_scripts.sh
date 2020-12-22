@@ -18,7 +18,8 @@ if [ ! -d "TestComplete" ];
 then
 	mkdir -p "TestComplete";
 fi
-echo $( ls -v *.py | wc -c )
+
+echo "Found $( ls -v *.py | wc -c ) Python tests to be unified"
 if [ $( ls -v *.py | wc -c ) -ne 0 ]; then
   	echo "import requests" > ./TestComplete/test_complete.py
 	echo "import json" >> ./TestComplete/test_complete.py

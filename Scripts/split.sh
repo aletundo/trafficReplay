@@ -34,6 +34,7 @@ if [[ $# -gt 2 ]] ; then
 	    tshark -r $1 -2 -w $2/stream-$stream.cap -Y "tcp.stream==$stream"
 	done
 else
+	echo "No condition"
 	for stream in $(tshark -r $1 -T fields -e tcp.stream | sort -n | uniq)
 	do
 	    tshark -r $1 -2 -w $2/stream-$stream.cap -Y "tcp.stream==$stream"

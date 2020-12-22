@@ -2,7 +2,7 @@
 #Devono essere passati almeno un argomento: il nome dell'interfaccia sulla quale ascoltare
 #Se viene passato anche il secondo argomento indica la lista lista dei nomi delle applicazioni da monitorare
 
-echo "Caputure script called with ${#}"
+echo "Caputure script called with ${@}"
 
 #Mancano gli argomenti obbligatori
 if [[ $# -lt 3 ]] ; then
@@ -26,6 +26,7 @@ if [ -f "list_names_mongo_containers.txt" ]; then
 	rm -f "list_names_mongo_containers.txt"
 fi
 
+# FIXME: THESE ARE NOT MONGO CONTAINERS ONLY! THEY ARE ALL THE CONTAINERS RUNNING
 docker ps --format "{{.Names}}" > "list_names_mongo_containers.txt"
 
 #Salvataggio file con nomi dei container mongo associati a indirizzo ip
@@ -33,7 +34,6 @@ docker ps --format "{{.Names}}" > "list_names_mongo_containers.txt"
 
 while read name; do
     name_mongo_cont=$name
-	echo "Mongo container name: $name_mongo_cont"
 	id_mongocontainer=$(docker ps -aqf "name="$name_mongo_cont)
 	inspect=$(docker inspect $id_mongocontainer | grep "IPAddress")
 	ipdb=${inspect%,*}     # trim everything past the last ,
@@ -42,24 +42,21 @@ while read name; do
 	ipdb=${ipdb##*:}
 	ipdb=${ipdb##* }
 	ipdb="$(echo -e "${ipdb}" | tr -d '[:space:]')"
-	echo "Container IP: $ipdb"
+	echo "Container $name_mongo_cont($ipdb)"
 	if [ ! -f "name_ip_mongo.txt" ]; then
 	    	echo "$name_mongo_cont;$ipdb" > "name_ip_mongo.txt"
 	else
 		echo "$name_mongo_cont;$ipdb" >> "name_ip_mongo.txt"
 	fi
 done < "list_names_mongo_containers.txt"
+
 #C'è solo interfaccia quindi catturo tutto il traffico sull'interfaccia specificata
 if [[ $# -eq 3 ]] ; then
 	echo "Capturing all traffic on interface"
 	tcpdump -U -i $3 -w $2
 	exit 0
 fi
-#Cattura tutto
-if [[ $# -eq 3 ]] ; then
-	tcpdump -U -i $3 -w $2
-	exit 0
-fi
+
 #C'è un solo nome di container quindi catturo pacchetti solo che comprendono questo container negli ip di dst o src
 if [[ $# -eq 4 ]] ; then
 	echo "Capturing traffic for ${container_name}"
@@ -81,9 +78,8 @@ else
 	i=3
 	condizione="( "
 	list=${@:4:$(($#-3))}
-	echo $list
+	echo "${list[*]}"
 	for container_name in $list; do
-		echo $container_name
 		id_application=$(docker ps -aqf "name="$container_name)
 		inspect=$(docker inspect $id_application | grep "IPAddress")
 		ipapp=${inspect%,*}     # trim everything past the last ,
