@@ -49,12 +49,7 @@ done < "list_names_mongo_containers.txt"
 # Only one interface, capture all the traffic on the interface
 if [[ $# -eq 3 ]] ; then
 	echo "c'è solo l'interfaccia quindi catturo tutto"
-	tcpdump -U -i $3 -w $2
-	exit 0
-fi
-# Capture everything
-if [[ $# -eq 3 ]] ; then
-	tcpdump -U -i $3 -w $2
+	sudo tcpdump -U -i $3 -w $2
 	exit 0
 fi
 # Only one container name, capture only packets that have this container as src or dst
@@ -69,7 +64,7 @@ if [[ $# -eq 4 ]] ; then
 	ipapp=${ipapp##* }
 	ipapp="$(echo -e "${ipapp}" | tr -d '[:space:]')"
 	echo "ip dell'applicazione $container_name : $ipapp"
-	tcpdump -U -i $3 -n "dst host $id_application or src host $id_application" -w $2
+	sudo tcpdump -U -i $3 -n "dst host $id_application or src host $id_application" -w $2
 	exit 0
 
 #Container list, capture interactions between them and their databases
@@ -97,7 +92,7 @@ else
 			condizione="$condizione host $ipapp or"
 		fi
 	done
-	tcpdump -U -i $3 -n "$condizione" -w $2
+	sudo tcpdump -U -i $3 -n "$condizione" -w $2
 	echo "condizione finale = $condizione"
 	exit 0
 fi

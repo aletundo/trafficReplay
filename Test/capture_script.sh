@@ -53,7 +53,7 @@ done < "list_names_mongo_containers.txt"
 #C'è solo interfaccia quindi catturo tutto il traffico sull'interfaccia specificata
 if [[ $# -eq 3 ]] ; then
 	echo "Capturing all traffic on interface"
-	tcpdump -U -i $3 -w $2
+	sudo tcpdump -U -i $3 -w $2
 	exit 0
 fi
 
@@ -69,7 +69,7 @@ if [[ $# -eq 4 ]] ; then
 	ipapp=${ipapp##* }
 	ipapp="$(echo -e "${ipapp}" | tr -d '[:space:]')"
 	echo "$container_name IP: $ipapp"
-	tcpdump -U -i $3 -n "dst host $id_application or src host $id_application" -w $2
+	sudo tcpdump -U -i $3 -n "dst host $id_application or src host $id_application" -w $2
 	exit 0
 #Lista di container --> devo catturare solo interazioni tra questi specificati ed i loro database
 #Se voglio catturare anche nterazione con i loro database devo passare anche nome dei loro container (dei db)
@@ -97,7 +97,7 @@ else
 		fi
 	done
 	echo "Capturing with condition: $condizione"
-	tcpdump -U -i $3 -n "$condizione" -w $2
+	sudo tcpdump -U -i $3 -n "$condizione" -w $2
 	exit 0
 fi
 cd ..
