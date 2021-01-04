@@ -68,7 +68,7 @@ else
 
 	cd ..
 
-	cd Versione$i\_*
+	cd Versione$VERSION_NUMBER\_*
 
 
 	yes | cp -a  piggymetrics/.  NonRegressionTesting/Account/
@@ -172,7 +172,7 @@ else
 
 	cd ..
 
-	cd Versione$i\_*/NonRegressionTesting/Notification/
+	cd Versione$VERSION_NUMBER\_*/NonRegressionTesting/Notification/
 
 	mvn package -DskipTests
 
@@ -254,7 +254,7 @@ else
 
 	cd ..
 
-	cd Versione$i\_*/NonRegressionTesting/Statistics/
+	cd Versione$VERSION_NUMBER\_*/NonRegressionTesting/Statistics/
 
 	mvn package -DskipTests
 
