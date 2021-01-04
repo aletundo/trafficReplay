@@ -8,7 +8,7 @@ export MONGODB_PASSWORD="mongo"
 
 VERSION_NUMBER=$1
 
-cd Versione$i\_*/
+cd Versione$VERSION_NUMBER\_*/
 
 new_version=$PWD
 
@@ -24,7 +24,7 @@ mkdir NonRegressionTesting/Notification
 
 cd ..
 
-old_version=$((i+1))
+old_version=$((VERSION_NUMBER+1))
 
 if [ -z "$( find * -type d -name 'Versione'$old_version'_*' )" ]; then
 	echo "No older versions! Exiting..."
