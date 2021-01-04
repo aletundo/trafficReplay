@@ -141,7 +141,7 @@ else
 
 	./../../Test.sh TestSuite_Account/ $idmockupmongo &> Account/Test_Report.txt
 
-	docker-compose down
+	docker rm -f $(docker ps -a -q)
 
 
 	echo "-------------------------NOTIFICATION-SERVICE----------------------------"
@@ -218,7 +218,7 @@ else
 
 	./../../Test.sh TestSuite_Notification/ $idmockupmongo &> Notification/Test_Report.txt
 
-	docker-compose down
+	docker rm -f $(docker ps -a -q)
 
 	echo "-------------------------STATISTICS-SERVICE----------------------------"
 
@@ -301,7 +301,7 @@ else
 
 	./../../Test.sh TestSuite_Statistics/ $idmockupmongo &> Statistics/Test_Report.txt
 
-	docker-compose down
+	docker rm -f $(docker ps -a -q)
 
 	cd ../..
 fi
