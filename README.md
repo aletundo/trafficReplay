@@ -6,6 +6,7 @@ A simple environment to replay the interaction between microservices that run on
 
 - jdk8
 - git
+- maven
 - docker and docker-compose
 - tshark
 - python3

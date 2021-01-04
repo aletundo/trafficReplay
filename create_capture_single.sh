@@ -24,10 +24,11 @@ cd piggymetrics
 
 mvn package -DskipTests
 
-docker-compose  -f docker-compose.yml -f docker-compose.dev.yml up -d config registry
-docker-compose  -f docker-compose.yml -f docker-compose.dev.yml up -d auth-mongodb statistics-mongodb notification-mongodb account-mongodb rabbitmq
-docker-compose  -f docker-compose.yml -f docker-compose.dev.yml up -d auth-service
-docker-compose  -f docker-compose.yml -f docker-compose.dev.yml up -d statistics-service account-service notification-service
+docker-compose  -f docker-compose.yml -f docker-compose.dev.yml build
+docker-compose  -f docker-compose.yml -f docker-compose.dev.yml up -d --force-recreate config registry
+docker-compose  -f docker-compose.yml -f docker-compose.dev.yml up -d --force-recreate auth-mongodb statistics-mongodb notification-mongodb account-mongodb rabbitmq
+docker-compose  -f docker-compose.yml -f docker-compose.dev.yml up -d --force-recreate auth-service
+docker-compose  -f docker-compose.yml -f docker-compose.dev.yml up -d --force-recreate statistics-service account-service notification-service
 
 ipstat=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps | grep piggymetrics_statistics-service | awk '{print $1}'))
 count=1
@@ -152,6 +153,6 @@ cd $VERSION_DIR
 
 cd piggymetrics
 
-docker-compose stop
+docker-compose down
 
 cd ../..

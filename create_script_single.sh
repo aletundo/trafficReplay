@@ -43,7 +43,7 @@ printf "Generating Python complete test script\n"
 ./automatic_union.sh 1 25
 
 cd piggymetrics
-docker-compose  -f docker-compose.yml -f docker-compose.dev.yml up -d auth-mongodb statistics-mongodb notification-mongodb account-mongodb
+docker-compose  -f docker-compose.yml -f docker-compose.dev.yml up -d --force-recreate auth-mongodb statistics-mongodb notification-mongodb account-mongodb
 
 sleep 10
 cd ..
