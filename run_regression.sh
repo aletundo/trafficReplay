@@ -84,7 +84,7 @@ else
 	# yes | cp -a ../../Files_Config/application.yml account-service/target/test-classes/
 	# yes | cp -a ../../Files_Config/application.yml account-service/src/test/resources/
 	# yes | cp -a ../../Files_Config/account-service.yml config/target/classes/shared/
-	yes | cp -a ../../Files_Config/account-service.yml config/src/main/resources/shared/
+	yes | cp -a ../../../Files_Config/account-service.yml config/src/main/resources/shared/
 
 	# yes | cp -a /home/luca/Tesi/Test_Microservice/Files_Config/application.yml account-service/target/test-classes/
 	# yes | cp -a /home/luca/Tesi/Test_Microservice/Files_Config/application.yml account-service/src/test/resources/
@@ -151,7 +151,7 @@ else
 	# yes | cp -a ../../Files_Config/application.yml notification-service/target/test-classes/
 	# yes | cp -a ../../Files_Config/application.yml notification-service/src/test/resources/
 	# yes | cp -a ../../Files_Config/notification-service.yml config/target/classes/shared/
-	yes | cp -a ../../Files_Config/notification-service.yml config/src/main/resources/shared/
+	yes | cp -a ../../../Files_Config/notification-service.yml config/src/main/resources/shared/
 
 	# yes | cp -a /home/luca/Tesi/Test_Microservice/PiggyMetrics/config/target/classes/shared/notification-service.yml config/target/classes/shared/
 	# yes | cp -a /home/luca/Tesi/Test_Microservice/PiggyMetrics/config/src/main/resources/shared/notification-service.yml config/src/main/resources/shared/
@@ -232,7 +232,7 @@ else
 	# yes | cp -a ../../Files_Config/application.yml statistics-service/target/test-classes/
 	# yes | cp -a ../../Files_Config/application.yml statistics-service/src/test/resources/
 	# yes | cp -a ../../Files_Config/statistics-service.yml config/target/classes/shared/
-	yes | cp -a ../../Files_Config/statistics-service.yml config/src/main/resources/shared/
+	yes | cp -a ../../../Files_Config/statistics-service.yml config/src/main/resources/shared/
 
 	# docker rm -f $(docker ps -a -q)
 
