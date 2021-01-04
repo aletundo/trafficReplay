@@ -6,7 +6,7 @@ export STATISTICS_SERVICE_PASSWORD="stat_serv"
 export ACCOUNT_SERVICE_PASSWORD="acc_serv"
 export MONGODB_PASSWORD="mongo"
 
-for i in $(seq $1 $2); 
+for i in $(seq $1 $2);
 do
 
 	docker rm -f $(docker ps -a -q)
@@ -22,20 +22,20 @@ do
 	mkdir NonRegressionTesting
 
 	mkdir NonRegressionTesting/Account
-	
+
 	mkdir NonRegressionTesting/Statistics
 
 	mkdir NonRegressionTesting/Notification
 
 	cd ..
-	
+
 	old_version=$((i+1))
 
 	if [ -z "$( find * -type d -name 'Versione'$old_version'_*' )" ]; then
 		echo "Nessuna versione più vecchia"
 		exit 1
 	fi
-	
+
 	cd Versione$old_version\_*/
 
 	if ( [ -z "$( find * -type d -name 'TestSuite_Account' )" ] && [ -z "$( find * -type d -name 'TestSuite_Notification' )" ] && [ -z "$( find * -type d -name 'TestSuite_Statistics' )" ] ) ; then
@@ -62,14 +62,14 @@ do
 		cd ..
 
 		cd my_mockup_app_Auth
-		
+
 		docker build -t mockupapp .
 
 		cd ..
-		
+
 		cd Versione$i\_*
 
-		
+
 		yes | cp -a  piggymetrics/.  NonRegressionTesting/Account/
 		yes | cp -a  piggymetrics/.  NonRegressionTesting/Statistics/
 		yes | cp -a  piggymetrics/.  NonRegressionTesting/Notification/
@@ -80,16 +80,18 @@ do
 
 		cd NonRegressionTesting/Account/
 
-		yes | cp -a /home/luca/Tesi/Test_Microservice/Files_Config/application.yml account-service/target/test-classes/
-		yes | cp -a /home/luca/Tesi/Test_Microservice/Files_Config/application.yml account-service/src/test/resources/
-		yes | cp -a /home/luca/Tesi/Test_Microservice/Files_Config/account-service.yml config/target/classes/shared/
-		yes | cp -a /home/luca/Tesi/Test_Microservice/Files_Config/account-service.yml config/src/main/resources/shared/
-		yes | cp -a /home/luca/Tesi/Test_Microservice/PiggyMetrics/account-service/src/main/java/com/piggymetrics/account/service/AccountServiceImpl.java account-service/src/main/java/com/piggymetrics/account/service/
-		
+		yes | cp -a ../../../Files_Config/account-service.yml config/src/main/resources/shared/
+
+		# yes | cp -a /home/luca/Tesi/Test_Microservice/Files_Config/application.yml account-service/target/test-classes/
+		# yes | cp -a /home/luca/Tesi/Test_Microservice/Files_Config/application.yml account-service/src/test/resources/
+		# yes | cp -a /home/luca/Tesi/Test_Microservice/Files_Config/account-service.yml config/target/classes/shared/
+		# yes | cp -a /home/luca/Tesi/Test_Microservice/Files_Config/account-service.yml config/src/main/resources/shared/
+		# yes | cp -a /home/luca/Tesi/Test_Microservice/PiggyMetrics/account-service/src/main/java/com/piggymetrics/account/service/AccountServiceImpl.java account-service/src/main/java/com/piggymetrics/account/service/
+
 		mvn package -DskipTests
-		
+
 		echo "-------------------------ACCOUNT-SERVICE----------------------------"
-		
+
 		docker-compose -f docker-compose.yml -f docker-compose.dev.yml up > test.txt &
 
 		ipacc=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps | grep account_account-service | awk '{print $1}'))
@@ -118,11 +120,6 @@ do
 
 		sleep 10
 
-		#Da Togliere --------------------------
-		interfaccia=$(brctl show | awk 'NF>1 && NR>1 {print $1}' | grep br-)
-		tcpdump -i $interfaccia -w capture.pcap &
-		#Fino a qua --------------------------
-		
 		chmod +x auth-mock-response-acc.sh
 
 		docker ps
@@ -139,22 +136,18 @@ do
 
 		./../../Test.sh TestSuite_Account/ $idmockupmongo &> Account/Test_Report.txt
 
-		#Da Togliere --------------------------
-		sleep 20
-		pid=$(ps -e | pgrep tcpdump) 
-		kill -2 $pid
-		#Fino a qua --------------------------
-
 		echo "-------------------------NOTIFICATION-SERVICE----------------------------"
 
 		cd Notification
 
-		yes | cp -a /home/luca/Tesi/Test_Microservice/PiggyMetrics/config/target/classes/shared/notification-service.yml config/target/classes/shared/
-		yes | cp -a /home/luca/Tesi/Test_Microservice/PiggyMetrics/config/src/main/resources/shared/notification-service.yml config/src/main/resources/shared/
-		yes | cp -a /home/luca/Tesi/Test_Microservice/PiggyMetrics/notification-service/target/test-classes/application.yml notification-service/target/test-classes/
-		yes | cp -a /home/luca/Tesi/Test_Microservice/PiggyMetrics/notification-service/src/test/resources/application.yml notification-service/src/test/resources/
+		yes | cp -a ../../../Files_Config/notification-service.yml config/src/main/resources/shared/
 
-		
+		# yes | cp -a /home/luca/Tesi/Test_Microservice/PiggyMetrics/config/target/classes/shared/notification-service.yml config/target/classes/shared/
+		# yes | cp -a /home/luca/Tesi/Test_Microservice/PiggyMetrics/config/src/main/resources/shared/notification-service.yml config/src/main/resources/shared/
+		# yes | cp -a /home/luca/Tesi/Test_Microservice/PiggyMetrics/notification-service/target/test-classes/application.yml notification-service/target/test-classes/
+		# yes | cp -a /home/luca/Tesi/Test_Microservice/PiggyMetrics/notification-service/src/test/resources/application.yml notification-service/src/test/resources/
+
+
 		docker-compose stop
 
 		docker rm -f $(docker ps -a -q)
@@ -172,17 +165,17 @@ do
 		cd ..
 
 		cd my_mockup_app_Auth
-		
+
 		docker build -t mockupapp .
 
 		cd ..
-		
+
 		cd Versione$i\_*/NonRegressionTesting/Notification/
 
 		mvn package -DskipTests
-		
+
 		docker-compose -f docker-compose.yml -f docker-compose.dev.yml up > test.txt &
-			
+
 		ipnot=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps | grep notification_notification-service | awk '{print $1}'))
 		count=1
 
@@ -208,11 +201,6 @@ do
 		fi
 		sleep 10
 
-		#Da Togliere --------------------------
-		interfaccia=$(brctl show | awk 'NF>1 && NR>1 {print $1}' | grep br-)
-		tcpdump -i $interfaccia -w capture.pcap &
-		#Fino a qua --------------------------
-		
 		chmod +x auth-mock-response-not.sh
 
 		ipmockupapp=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps | grep notification_auth-service | awk '{print $1}'))
@@ -227,20 +215,17 @@ do
 
 		./../../Test.sh TestSuite_Notification/ $idmockupmongo &> Notification/Test_Report.txt
 
-		#Da Togliere --------------------------
-		sleep 20
-		pid=$(ps -e | pgrep tcpdump) 
-		kill -2 $pid
-		#Fino a qua --------------------------
 
 		echo "-------------------------STATISTICS-SERVICE----------------------------"
 
 		cd Statistics
 
-		yes | cp -a /home/luca/Tesi/Test_Microservice/PiggyMetrics/config/target/classes/shared/statistics-service.yml config/target/classes/shared/
-		yes | cp -a /home/luca/Tesi/Test_Microservice/PiggyMetrics/config/src/main/resources/shared/statistics-service.yml config/src/main/resources/shared/
-		yes | cp -a /home/luca/Tesi/Test_Microservice/PiggyMetrics/statistics-service/target/test-classes/application.yml statistics-service/target/test-classes/
-		yes | cp -a /home/luca/Tesi/Test_Microservice/PiggyMetrics/statistics-service/src/test/resources/application.yml statistics-service/src/test/resources/
+		yes | cp -a ../../../Files_Config/statistics-service.yml config/src/main/resources/shared/
+
+		# yes | cp -a /home/luca/Tesi/Test_Microservice/PiggyMetrics/config/target/classes/shared/statistics-service.yml config/target/classes/shared/
+		# yes | cp -a /home/luca/Tesi/Test_Microservice/PiggyMetrics/config/src/main/resources/shared/statistics-service.yml config/src/main/resources/shared/
+		# yes | cp -a /home/luca/Tesi/Test_Microservice/PiggyMetrics/statistics-service/target/test-classes/application.yml statistics-service/target/test-classes/
+		# yes | cp -a /home/luca/Tesi/Test_Microservice/PiggyMetrics/statistics-service/src/test/resources/application.yml statistics-service/src/test/resources/
 
 		docker-compose stop
 
@@ -259,17 +244,17 @@ do
 		cd ..
 
 		cd my_mockup_app_Auth
-		
+
 		docker build -t mockupapp .
 
 		cd ..
-		
+
 		cd Versione$i\_*/NonRegressionTesting/Statistics/
 
 		mvn package -DskipTests
-		
+
 		docker-compose -f docker-compose.yml -f docker-compose.dev.yml up > test.txt &
-		
+
 		ipstat=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps | grep statistics_statistics-service | awk '{print $1}'))
 		count=1
 
@@ -296,11 +281,6 @@ do
 
 		sleep 10
 
-		#Da Togliere --------------------------
-		interfaccia=$(brctl show | awk 'NF>1 && NR>1 {print $1}' | grep br-)
-		tcpdump -i $interfaccia -w capture.pcap &
-		#Fino a qua --------------------------
-		
 		chmod +x auth-mock-response-stat.sh
 
 		ipmockupapp=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps | grep statistics_auth-service_ | awk '{print $1}'))
@@ -315,15 +295,9 @@ do
 
 		./../../Test.sh TestSuite_Statistics/ $idmockupmongo &> Statistics/Test_Report.txt
 
-		#Da Togliere --------------------------
-		sleep 20
-		pid=$(ps -e | pgrep tcpdump) 
-		kill -2 $pid
-		#Fino a qua --------------------------
-		
 		cd ../..
 	fi
-	
+
 done
 
 
@@ -331,4 +305,4 @@ done
 
 
 
-	
+
