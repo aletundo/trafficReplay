@@ -127,7 +127,7 @@ if [ "$ipauth" != "non_connesso" ]; then
 	printf "Connected to auth service \n"
 fi
 
-interfaccia=$(brctl show | awk 'NF>1 && NR>1 {print $1}' | grep br-)
+interfaccia=$(sudo brctl show | awk 'NF>1 && NR>1 {print $1}' | grep br-)
 
 printf "We are going to capture interface: $interfaccia\n\n"
 
