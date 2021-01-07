@@ -1,12 +1,4 @@
-FROM ubuntu
-
-ENV DEBIAN_FRONTEND="noninteractive"
-
-RUN apt-get update
-
-RUN apt-get install -y curl nodejs npm
-
-RUN npm install -g npm
+FROM node:lts-buster-slim
 
 RUN npm install -g mountebank
 

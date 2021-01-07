@@ -3,7 +3,6 @@ import mockupdb
 from collections import OrderedDict
 import sys
 import json
-import pprint
 from bson.int64 import Int64
 import time
 import os
