@@ -7,7 +7,7 @@ export ACCOUNT_SERVICE_PASSWORD="acc_serv"
 export MONGODB_PASSWORD="mongo"
 
 
-for i in $(seq $1 $2); 
+for i in $(seq $1 $2);
 do
 	docker rm -f $(docker ps -a -q)
 
@@ -20,17 +20,17 @@ do
 	echo "-------------------------------------------------"
 	echo $PWD
 	echo "-------------------------------------------------"
-	
+
 	subdir=$(basename $PWD)
 
 	echo $subdir
 
 	yes | cp -a  ../Scripts/.  .
-	
+
 	cd piggymetrics
 
 	mvn package -DskipTests
-	
+
 	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up > test.txt &
 
 	ipstat=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps | grep piggymetrics_statistics-service | awk '{print $1}'))
@@ -52,7 +52,7 @@ do
 
 
 
-	
+
 	ipnot=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps | grep piggymetrics_notification-service | awk '{print $1}'))
 	count=1
 
@@ -93,7 +93,7 @@ do
 	ipauth=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps | grep piggymetrics_auth-service | awk '{print $1}'))
 	count=1
 
-	
+
 	while [ -z "$ipauth" ]
 	do
 		if (( $count > 50 )); then
@@ -145,28 +145,28 @@ do
 		printf "connect to auth service \n"
 	fi
 
-	interfaccia=$(brctl show | awk 'NF>1 && NR>1 {print $1}' | grep br-)
+	interfaccia=$(sudo brctl show | awk 'NF>1 && NR>1 {print $1}' | grep br-)
 
 	echo $PWD
-	
+
 	cd ../..
 
 	echo $PWD
-	
+
 	cd Test
 
 	sleep 30
-	
+
 	sudo ./automatic_capture.sh $interfaccia acc_$ipacc auth_$ipauth stat_$ipstat not_$ipnot $subdir > ../$subdir/risultato.txt
 
 	cd ..
-	
+
 	cd Versione$i\_*/
-	
+
 	cd piggymetrics
 
 	docker-compose stop
-	
+
 	cd ../..
 
 done
