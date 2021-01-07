@@ -1,4 +1,6 @@
-FROM python:3.5-slim-buster
+FROM python:3.4-slim-stretch
+
+RUN apt-get install -y git
 
 ADD mockupmongo.py /
 
