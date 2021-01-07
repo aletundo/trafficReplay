@@ -1,4 +1,4 @@
-FROM python:3.4-slim-stretch
+FROM python:3.5-slim-buster
 
 ADD mockupmongo.py /
 
