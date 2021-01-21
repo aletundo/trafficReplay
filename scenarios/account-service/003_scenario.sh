@@ -1,7 +1,7 @@
 #!/bin/bash
 
-$auth_service_host=$1
-$account_service_host=$2
+auth_service_host=$1
+account_service_host=$2
 
 # User 002_scenario tries to get current account without auth 5 times, then she login
 # and get the current account successfully

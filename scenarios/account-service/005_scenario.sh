@@ -1,7 +1,7 @@
 #!/bin/bash
 
-$auth_service_host=$1
-$account_service_host=$2
+auth_service_host=$1
+account_service_host=$2
 
 # A user fails two times to register due to username validation.
 # Then, she tries with an already used username. Finally, she complete the registration.

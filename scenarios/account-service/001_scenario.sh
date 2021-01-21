@@ -1,7 +1,7 @@
 #!/bin/bash
 
-$auth_service_host=$1
-$account_service_host=$2
+auth_service_host=$1
+account_service_host=$2
 
 # A user explore the demo, then she sign-up, login and save the current account
 

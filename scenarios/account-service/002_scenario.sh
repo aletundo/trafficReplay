@@ -1,7 +1,7 @@
 #!/bin/bash
 
-$auth_service_host=$1
-$account_service_host=$2
+auth_service_host=$1
+account_service_host=$2
 
 # A user register, then tries to get current account without auth.
 # Then she login and get current account.

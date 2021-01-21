@@ -1,7 +1,7 @@
 #!/bin/bash
 
-$auth_service_host=$1
-$account_service_host=$2
+auth_service_host=$1
+account_service_host=$2
 
 # A user fails to register due to password validation, at the second attempt she
 # complete the registration. Then, she get the current account and start to update
