@@ -40,7 +40,7 @@ do
 	fi
 done
 
-service_ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps | grep piggymetrics_auth-service | awk '{print $1}'))
+service_ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps | grep piggymetrics_$service_name-service | awk '{print $1}'))
 count=1
 while [ -z "$service_ip" ]
 do
@@ -49,13 +49,13 @@ do
 		exit 1
 	else
 	    sleep 10
-		service_ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps | grep piggymetrics_$service_name | awk '{print $1}'))
+		service_ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps | grep piggymetrics_$service_name-service | awk '{print $1}'))
 		count=$((count+1))
 	fi
 done
 
 if [ !-z "$service_ip" ]; then
-	printf 'Trying to connect to $service_name($service_ip)'
+	printf 'Trying to connect to $service_name-service($service_ip)'
 	until [ $(curl -s -o /dev/null -w "%{http_code}" $service_ip:$service_port) != "000" ]; do
 	    printf '.'
 	    sleep 20
