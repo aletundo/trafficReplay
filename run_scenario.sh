@@ -6,7 +6,7 @@ service_port=$3
 
 # Copy instrumentation source
 yes | cp -r "monitor/$service_name/filter" "piggymetrics/$service_name/src/main/java/com/piggymetrics/account/"
-yes | cp "monitor/$service_name/config/*.java" "piggymetrics/$service_name/src/main/java/com/piggymetrics/account/config/"
+yes | cp "monitor/$service_name/config/"*.java "piggymetrics/$service_name/src/main/java/com/piggymetrics/account/config/"
 yes | cp "monitor/$service_name/logback-spring.xml" "piggymetrics/$service_name/src/main/resources/logback-spring.xml"
 
 # Package with maven
