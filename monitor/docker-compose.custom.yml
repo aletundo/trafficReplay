@@ -1,5 +1,14 @@
 version: '2.1'
 services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    restart: always
+    ports:
+      - 5672:5672
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "10"
   config:
     environment:
       CONFIG_SERVICE_PASSWORD: $CONFIG_SERVICE_PASSWORD

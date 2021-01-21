@@ -1,5 +1,11 @@
 #!/bin/bash
 
+export CONFIG_SERVICE_PASSWORD="conf_serv"
+export NOTIFICATION_SERVICE_PASSWORD="not_serv"
+export STATISTICS_SERVICE_PASSWORD="stat_serv"
+export ACCOUNT_SERVICE_PASSWORD="acc_serv"
+export MONGODB_PASSWORD="mongo"
+
 scenario_name=$1
 service_name=$2
 service_port=$3
@@ -14,15 +20,14 @@ cd piggymetrics
 mvn -DskipTests package
 cd ..
 
-
 yes | cp monitor/docker-compose.custom.yml piggymetrics/
 
 # Build services
-docker-compose -f piggymetrics/docker-compose.custom.yml build config registry auth-mongodb auth-service "$service_name-service" "$service_name-mongodb"
+docker-compose -f piggymetrics/docker-compose.custom.yml build rabbitmq config registry auth-mongodb auth-service "$service_name-service" "$service_name-mongodb"
 
 # Run services
 docker-compose -f piggymetrics/docker-compose.custom.yml up -d config registry
-docker-compose -f piggymetrics/docker-compose.custom.yml up -d auth-mongodb "$service_name-mongodb"
+docker-compose -f piggymetrics/docker-compose.custom.yml up -d rabbitmq auth-mongodb "$service_name-mongodb"
 sleep 5
 docker-compose -f piggymetrics/docker-compose.custom.yml up -d auth-service "$service_name-service"
 
@@ -54,8 +59,8 @@ do
 	fi
 done
 
-if [ !-z "$service_ip" ]; then
-	printf 'Trying to connect to $service_name-service($service_ip)'
+if [ -n "$service_ip" ]; then
+	printf "Trying to connect to $service_name-service ($service_ip)"
 	until [ $(curl -s -o /dev/null -w "%{http_code}" $service_ip:$service_port) != "000" ]; do
 	    printf '.'
 	    sleep 20
@@ -65,4 +70,9 @@ fi
 
 interface=$(sudo brctl show | awk 'NF>1 && NR>1 {print $1}' | grep br-)
 
+echo "Interface: $interface"
+echo "auth-service IP: $auth_service_ip"
+echo "$service_name-service IP: $service_ip"
+
 ./scenarios/$scenario_name.sh $auth_service_ip $service_ip
+docker cp "$(docker-compose -f piggymetrics/docker-compose.custom.yml ps -q $service_name-service)":/logs/monitor.log "./scenarios/$scenario_name.log"
