@@ -1,5 +1,6 @@
 #!/bin/bash
 
+dirname=`dirname "$0"`
 auth_service_host=$1
 account_service_host=$2
 
@@ -17,14 +18,14 @@ token=$(curl -X POST -H "Authorization: Basic YnJvd3Nlcjo=" -d "scope=ui&grant_t
 sleep 2
 curl -X GET -H "Authorization: Bearer $token" -H "Accept: application/json" http://$account_service_host:6000/accounts/current
 sleep 2
-curl -X PUT -d @006_scenario_no_saving.json -H "Authorization: Bearer $token" -H "Content-Type: application/json" http://$account_service_host:6000/accounts/current
+curl -X PUT -d @$dirname/006_scenario_no_saving.json -H "Authorization: Bearer $token" -H "Content-Type: application/json" http://$account_service_host:6000/accounts/current
 sleep 2
-curl -X PUT -d @006_scenario_no_saving.json -H "Authorization: Bearer $token" -H "Content-Type: application/json" http://$account_service_host:6000/accounts/current
+curl -X PUT -d @$dirname/006_scenario_no_saving.json -H "Authorization: Bearer $token" -H "Content-Type: application/json" http://$account_service_host:6000/accounts/current
 sleep 2
-curl -X PUT -d @006_scenario_no_saving.json -H "Authorization: Bearer $token" -H "Content-Type: application/json" http://$account_service_host:6000/accounts/current
+curl -X PUT -d @$dirname/006_scenario_no_saving.json -H "Authorization: Bearer $token" -H "Content-Type: application/json" http://$account_service_host:6000/accounts/current
 sleep 2
-curl -X PUT -d @006_scenario_no_saving.json -H "Authorization: Bearer $token" -H "Content-Type: application/json" http://$account_service_host:6000/accounts/current
+curl -X PUT -d @$dirname/006_scenario_no_saving.json -H "Authorization: Bearer $token" -H "Content-Type: application/json" http://$account_service_host:6000/accounts/current
 sleep 2
-curl -X PUT -d @006_scenario_no_exp_amount.json -H "Authorization: Bearer $token" -H "Content-Type: application/json" http://$account_service_host:6000/accounts/current
+curl -X PUT -d @$dirname/006_scenario_no_exp_amount.json -H "Authorization: Bearer $token" -H "Content-Type: application/json" http://$account_service_host:6000/accounts/current
 sleep 2
-curl -X PUT -d @006_scenario_exp_title.json -H "Authorization: Bearer $token" -H "Content-Type: application/json" http://$account_service_host:6000/accounts/current
+curl -X PUT -d @$dirname/006_scenario_exp_title.json -H "Authorization: Bearer $token" -H "Content-Type: application/json" http://$account_service_host:6000/accounts/current

@@ -74,5 +74,5 @@ echo "Interface: $interface"
 echo "auth-service IP: $auth_service_ip"
 echo "$service_name-service IP: $service_ip"
 
-./scenarios/$scenario_name.sh $auth_service_ip $service_ip
-docker cp "$(docker-compose -f piggymetrics/docker-compose.custom.yml ps -q $service_name-service)":/logs/monitor.log "./scenarios/$scenario_name.log"
+./scenarios/$service_name-service/$scenario_name.sh $auth_service_ip $service_ip
+docker cp "$(docker-compose -f piggymetrics/docker-compose.custom.yml ps -q $service_name-service)":/logs/monitor.log "./scenarios/$service_name-service/$scenario_name.log"

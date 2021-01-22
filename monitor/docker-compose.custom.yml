@@ -83,8 +83,8 @@ services:
       options:
         max-size: "10m"
         max-file: "10"
-    volumes:
-      - ./account-service.logs:/logs
+    # volumes:
+    #   - ./account-service.logs:/logs
 
   account-mongodb:
     environment:
@@ -115,8 +115,8 @@ services:
       options:
         max-size: "10m"
         max-file: "10"
-    volumes:
-      - ./statistics-service.logs:/logs
+    # volumes:
+    #   - ./statistics-service.logs:/logs
 
   statistics-mongodb:
     environment:
@@ -146,8 +146,8 @@ services:
       options:
         max-size: "10m"
         max-file: "10"
-    volumes:
-      - ./notification-service.logs:/logs
+    # volumes:
+    #   - ./notification-service.logs:/logs
 
   notification-mongodb:
     build: mongodb

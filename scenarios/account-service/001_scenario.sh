@@ -1,5 +1,6 @@
 #!/bin/bash
 
+dirname=`dirname "$0"`
 auth_service_host=$1
 account_service_host=$2
 
@@ -12,4 +13,4 @@ curl -X POST -d '{"username":"001_scenario","password":"password"}' -H "Content-
 sleep 3
 token=$(curl -X POST -H "Authorization: Basic YnJvd3Nlcjo=" -d "scope=ui&grant_type=password&username=001_scenario&password=password" http://$auth_service_host:5000/uaa/oauth/token | jq -j .access_token)
 sleep 5
-curl -X PUT -d @001_scenario_data.json -H "Authorization: Bearer $token" -H "Content-Type: application/json" http://$account_service_host:6000/accounts/current
+curl -X PUT -d @$dirname/001_scenario_data.json -H "Authorization: Bearer $token" -H "Content-Type: application/json" http://$account_service_host:6000/accounts/current

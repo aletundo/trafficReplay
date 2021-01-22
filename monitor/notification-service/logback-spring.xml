@@ -17,7 +17,7 @@
     <file>${LOGS}/monitor.log</file>
     <encoder
       class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-      <Pattern>%n</Pattern>
+      <Pattern>%m%n</Pattern>
     </encoder>
 
     <rollingPolicy
