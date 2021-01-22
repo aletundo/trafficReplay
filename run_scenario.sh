@@ -60,6 +60,15 @@ do
 done
 
 if [ -n "$service_ip" ]; then
+	printf "Trying to connect to auth-service ($auth_service_ip)"
+	until [ $(curl -s -o /dev/null -w "%{http_code}" $auth_service_ip:5000) != "000" ]; do
+	    printf '.'
+	    sleep 20
+	done
+	echo "Connected to auth-service"
+fi
+
+if [ -n "$service_ip" ]; then
 	printf "Trying to connect to $service_name-service ($service_ip)"
 	until [ $(curl -s -o /dev/null -w "%{http_code}" $service_ip:$service_port) != "000" ]; do
 	    printf '.'

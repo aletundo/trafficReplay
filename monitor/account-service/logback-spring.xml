@@ -17,7 +17,7 @@
     <file>${LOGS}/monitor.log</file>
     <encoder
       class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-      <Pattern>%m%n</Pattern>
+      <Pattern>%msg%n</Pattern>
     </encoder>
 
     <rollingPolicy
@@ -37,8 +37,8 @@
     <appender-ref ref="Console" />
   </root>
 
-  <!-- LOG "com.piggymetrics.account.filter.*" at TRACE level -->
-  <logger name="com.piggymetrics.account.filter.*" level="info" additivity="false">
+  <!-- LOG "com.piggymetrics.account.filter" at TRACE level -->
+  <logger name="com.piggymetrics.account.filter" level="info" additivity="false">
     <appender-ref ref="RollingFile" />
     <appender-ref ref="Console" />
   </logger>
