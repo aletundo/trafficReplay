@@ -85,6 +85,12 @@ echo "$service_name-service IP: $service_ip"
 
 sleep 30
 
+sudo tcpdump -U -i $interface -n "dst host $service_ip or src host $service_ip" -w "./scenarios/$service_name-service/$scenario_name.pcap" &
+
 ./scenarios/$service_name-service/$scenario_name.sh $auth_service_ip $service_ip
+
+pid=$(ps -e | pgrep tcpdump)
+kill -2 $pid
+
 docker cp "$(docker-compose -f piggymetrics/docker-compose.custom.yml ps -q $service_name-service)":/logs/monitor.log "./scenarios/$service_name-service/$scenario_name.log"
 docker cp "$(docker-compose -f piggymetrics/docker-compose.custom.yml ps -q $service_name-service)":/logs/monitor-debug.log "./scenarios/$service_name-service/$scenario_name-debug.log"
