@@ -63,7 +63,7 @@ if [ -n "$service_ip" ]; then
 	printf "Trying to connect to auth-service ($auth_service_ip)"
 	until [ $(curl -s -o /dev/null -w "%{http_code}" $auth_service_ip:5000) != "000" ]; do
 	    printf '.'
-	    sleep 20
+	    sleep 10
 	done
 	echo "Connected to auth-service"
 fi
@@ -72,7 +72,7 @@ if [ -n "$service_ip" ]; then
 	printf "Trying to connect to $service_name-service ($service_ip)"
 	until [ $(curl -s -o /dev/null -w "%{http_code}" $service_ip:$service_port) != "000" ]; do
 	    printf '.'
-	    sleep 20
+	    sleep 10
 	done
 	echo "Connected to $service_name-service"
 fi
@@ -82,6 +82,8 @@ interface=$(sudo brctl show | awk 'NF>1 && NR>1 {print $1}' | grep br-)
 echo "Interface: $interface"
 echo "auth-service IP: $auth_service_ip"
 echo "$service_name-service IP: $service_ip"
+
+sleep 30
 
 ./scenarios/$service_name-service/$scenario_name.sh $auth_service_ip $service_ip
 docker cp "$(docker-compose -f piggymetrics/docker-compose.custom.yml ps -q $service_name-service)":/logs/monitor.log "./scenarios/$service_name-service/$scenario_name.log"
