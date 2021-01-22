@@ -32,9 +32,9 @@
     </rollingPolicy>
   </appender>
 
-  <appender name="RollingFileError"
+  <appender name="RollingFileDebug"
     class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <file>${LOGS}/monitor-error.log</file>
+    <file>${LOGS}/monitor-debug.log</file>
     <encoder
       class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
       <Pattern>
@@ -46,7 +46,7 @@
       class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
       <!-- rollover daily and when the file reaches 10 MegaBytes -->
       <fileNamePattern>
-        ${LOGS}/archived/monitor-error-%d{yyyy-MM-dd}.%i.log
+        ${LOGS}/archived/monitor-debug-%d{yyyy-MM-dd}.%i.log
       </fileNamePattern>
       <timeBasedFileNamingAndTriggeringPolicy
         class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
@@ -60,9 +60,9 @@
     <appender-ref ref="Console" />
   </root>
 
-  <!-- LOG "com.piggymetrics.account.filter" at ERROR level -->
-  <logger name="com.piggymetrics.account.filter" level="error" additivity="false">
-    <appender-ref ref="RollingFileError" />
+  <!-- LOG "com.piggymetrics.account.filter" at DEBUG level -->
+  <logger name="com.piggymetrics.account.filter" level="debug" additivity="false">
+    <appender-ref ref="RollingFileDebug" />
     <appender-ref ref="Console" />
   </logger>
 
