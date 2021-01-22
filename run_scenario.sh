@@ -11,16 +11,16 @@ service_name=$2
 service_port=$3
 
 # Copy instrumentation source
-rsync av --update "monitor/$service_name-service/filter" "piggymetrics/$service_name-service/src/main/java/com/piggymetrics/account/"
-rsync av --update "monitor/$service_name-service/config/"*.java "piggymetrics/$service_name-service/src/main/java/com/piggymetrics/account/config/"
-rsync av --update "monitor/$service_name-service/logback-spring.xml" "piggymetrics/$service_name-service/src/main/resources/logback-spring.xml"
+rsync --update -raz "monitor/$service_name-service/filter" "piggymetrics/$service_name-service/src/main/java/com/piggymetrics/account/"
+rsync --update -raz "monitor/$service_name-service/config/"*.java "piggymetrics/$service_name-service/src/main/java/com/piggymetrics/account/config/"
+rsync --update -raz "monitor/$service_name-service/logback-spring.xml" "piggymetrics/$service_name-service/src/main/resources/logback-spring.xml"
 
 # Package with maven
 cd piggymetrics
 mvn -DskipTests package
 cd ..
 
-rsync av --update monitor/docker-compose.custom.yml piggymetrics/
+rsync --update -raz monitor/docker-compose.custom.yml piggymetrics/
 
 # Build services
 docker-compose -f piggymetrics/docker-compose.custom.yml build rabbitmq config registry auth-mongodb auth-service "$service_name-service" "$service_name-mongodb"
