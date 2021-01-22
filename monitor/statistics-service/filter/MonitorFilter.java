@@ -116,7 +116,7 @@ public class MonitorFilter extends OncePerRequestFilter {
                   response.getContentAsByteArray(), response.getCharacterEncoding()), new TypeReference<List<DataPoint>>(){});
       payload = AbstractionUtils.abstractList(statistics);
     } catch (JsonMappingException | JsonParseException ignored) {
-      LOGGER.error("{}", ignored.getMessage());
+      LOGGER.debug("{}", ignored.getMessage());
     }
 
     return AbstractionUtils.GET_CURRENT_ACCOUNT_STATISTICS_ABSTRACTION + statusCode + payload;
@@ -137,7 +137,7 @@ public class MonitorFilter extends OncePerRequestFilter {
                   response.getContentAsByteArray(), response.getCharacterEncoding()), new TypeReference<List<DataPoint>>(){});
       payload = AbstractionUtils.abstractList(statistics);
     } catch (JsonMappingException | JsonParseException ignored) {
-      LOGGER.error("{}", ignored.getMessage());
+      LOGGER.debug("{}", ignored.getMessage());
     }
 
     return AbstractionUtils.GET_STATISTICS_BY_ACCOUNT_NAME_ABSTRACTION + statusCode + payload;
@@ -153,7 +153,7 @@ public class MonitorFilter extends OncePerRequestFilter {
                   request.getInputStream(), request.getCharacterEncoding()), Account.class);
       payload = AbstractionUtils.abstractAccount(account);
     } catch (JsonMappingException | JsonParseException ignored) {
-      LOGGER.error("{}", ignored.getMessage());
+      LOGGER.debug("{}", ignored.getMessage());
     }
     return AbstractionUtils.SAVE_ACCOUNT_STATISTICS_ABSTRACTION + payload;
   }
@@ -180,7 +180,7 @@ public class MonitorFilter extends OncePerRequestFilter {
   }
 
   private void logRequest(SpringRequestWrapper wrappedRequest) throws IOException {
-    LOGGER.info(
+    LOGGER.debug(
         "Request: method={}, uri={}, payload={}",
         wrappedRequest.getMethod(),
         wrappedRequest.getRequestURI(),
@@ -191,7 +191,7 @@ public class MonitorFilter extends OncePerRequestFilter {
   private void logResponse(SpringRequestWrapper wrappedRequest, SpringResponseWrapper wrappedResponse, int overriddenStatus)
       throws IOException {
     wrappedResponse.setCharacterEncoding("UTF-8");
-    LOGGER.info(
+    LOGGER.debug(
         "Response: method={}, uri={}, status={}, payload={}",
         wrappedRequest.getMethod(),
         wrappedRequest.getRequestURI(),

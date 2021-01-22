@@ -102,7 +102,9 @@ public class MonitorFilter extends OncePerRequestFilter {
     try {
       final Recipient recipient = OBJECT_MAPPER.readValue(inputStreamToString(request.getInputStream(), request.getCharacterEncoding()), Recipient.class);
       payload = AbstractionUtils.abstractRecipient(recipient);
-    } catch (JsonMappingException | JsonParseException ignored) {}
+    } catch (JsonMappingException | JsonParseException ignored) {
+      LOGGER.debug("{}", ignored.getMessage());
+    }
 
     return AbstractionUtils.GET_CURRENT_NOTIFICATIONS_SETTINGS_ABSTRACTION + statusCode + payload;
   }
@@ -113,7 +115,9 @@ public class MonitorFilter extends OncePerRequestFilter {
     try {
       final Recipient recipient = OBJECT_MAPPER.readValue(inputStreamToString(request.getInputStream(), request.getCharacterEncoding()), Recipient.class);
       payload = AbstractionUtils.abstractRecipient(recipient);
-    } catch (JsonMappingException | JsonParseException ignored) {}
+    } catch (JsonMappingException | JsonParseException ignored) {
+      LOGGER.debug("{}", ignored.getMessage());
+    }
 
     return AbstractionUtils.SAVE_CURRENT_NOTIFICATIONS_SETTINGS_ABSTRACTION + payload;
   }
@@ -125,7 +129,9 @@ public class MonitorFilter extends OncePerRequestFilter {
     try {
       final Recipient recipient = OBJECT_MAPPER.readValue(inputStreamToString(request.getInputStream(), request.getCharacterEncoding()), Recipient.class);
       payload = AbstractionUtils.abstractRecipient(recipient);
-    } catch (JsonMappingException | JsonParseException ignored) {}
+    } catch (JsonMappingException | JsonParseException ignored) {
+      LOGGER.debug("{}", ignored.getMessage());
+    }
 
     return AbstractionUtils.SAVE_CURRENT_NOTIFICATIONS_SETTINGS_ABSTRACTION + statusCode + payload;
   }
@@ -146,7 +152,7 @@ public class MonitorFilter extends OncePerRequestFilter {
   }
 
   private void logRequest(SpringRequestWrapper wrappedRequest) throws IOException {
-    LOGGER.info(
+    LOGGER.debug(
         "Request: method={}, uri={}, payload={}",
         wrappedRequest.getMethod(),
         wrappedRequest.getRequestURI(),
@@ -157,7 +163,7 @@ public class MonitorFilter extends OncePerRequestFilter {
   private void logResponse(SpringRequestWrapper wrappedRequest, SpringResponseWrapper wrappedResponse, int overriddenStatus)
       throws IOException {
     wrappedResponse.setCharacterEncoding("UTF-8");
-    LOGGER.info(
+    LOGGER.debug(
         "Response: method={}, uri={}, status={}, payload={}",
         wrappedRequest.getMethod(),
         wrappedRequest.getRequestURI(),
