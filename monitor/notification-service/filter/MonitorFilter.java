@@ -32,17 +32,17 @@ public class MonitorFilter extends OncePerRequestFilter {
       throws ServletException, IOException {
 
     final SpringRequestWrapper wrappedRequest = new SpringRequestWrapper(request);
-    LOGGER.info("Request symbol: {}", buildRequestSymbol(wrappedRequest));
+    LOGGER.info("{}", buildRequestSymbol(wrappedRequest));
 
     final SpringResponseWrapper wrappedResponse = new SpringResponseWrapper(response);
     try {
       chain.doFilter(wrappedRequest, wrappedResponse);
     } catch (Exception e) {
       wrappedResponse.setStatus(500);
-      LOGGER.info("Response symbol: {}", buildResponseSymbol(wrappedRequest, wrappedResponse));
+      LOGGER.info("{}", buildResponseSymbol(wrappedRequest, wrappedResponse));
       throw e;
     }
-    LOGGER.info("Response symbol: {}", buildResponseSymbol(wrappedRequest, wrappedResponse));
+    LOGGER.info("{}", buildResponseSymbol(wrappedRequest, wrappedResponse));
   }
 
 
@@ -53,7 +53,7 @@ public class MonitorFilter extends OncePerRequestFilter {
     final String method = request.getMethod();
     final String URI = request.getRequestURI();
 
-    LOGGER.info("{} {}", method, URI);
+    LOGGER.debug("{} {}", method, URI);
 
     switch (method) {
       case "GET":
@@ -76,7 +76,7 @@ public class MonitorFilter extends OncePerRequestFilter {
     final String method = request.getMethod();
     final String URI = request.getRequestURI();
 
-    LOGGER.info("{} {}", method, URI);
+    LOGGER.debug("{} {}", method, URI);
 
     switch (method) {
       case "GET":

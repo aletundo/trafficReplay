@@ -37,8 +37,8 @@
     <appender-ref ref="Console" />
   </root>
 
-  <!-- LOG "com.piggymetrics.statistics.filter.*" at TRACE level -->
-  <logger name="com.piggymetrics.statistics.filter.*" level="info" additivity="false">
+  <!-- LOG "com.piggymetrics.statistics.filter" at INFO level -->
+  <logger name="com.piggymetrics.statistics.filter" level="info" additivity="false">
     <appender-ref ref="RollingFile" />
     <appender-ref ref="Console" />
   </logger>

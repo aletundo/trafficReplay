@@ -36,17 +36,17 @@ public class MonitorFilter extends OncePerRequestFilter {
       throws ServletException, IOException {
 
     final SpringRequestWrapper wrappedRequest = new SpringRequestWrapper(request);
-    LOGGER.info("Request symbol: {}", buildRequestSymbol(wrappedRequest));
+    LOGGER.info("{}", buildRequestSymbol(wrappedRequest));
 
     final SpringResponseWrapper wrappedResponse = new SpringResponseWrapper(response);
     try {
       chain.doFilter(wrappedRequest, wrappedResponse);
     } catch (Exception e) {
       wrappedResponse.setStatus(500);
-      LOGGER.info("Response symbol: {}", buildResponseSymbol(wrappedRequest, wrappedResponse));
+      LOGGER.info("{}", buildResponseSymbol(wrappedRequest, wrappedResponse));
       throw e;
     }
-    LOGGER.info("Response symbol: {}", buildResponseSymbol(wrappedRequest, wrappedResponse));
+    LOGGER.info("{}", buildResponseSymbol(wrappedRequest, wrappedResponse));
   }
 
   private String buildRequestSymbol(SpringRequestWrapper request) throws IOException {
@@ -56,7 +56,7 @@ public class MonitorFilter extends OncePerRequestFilter {
     String method = request.getMethod();
     String URI = request.getRequestURI();
 
-    LOGGER.info("{} {}", method, URI);
+    LOGGER.debug("{} {}", method, URI);
 
     switch (method) {
       case "GET":
@@ -85,7 +85,7 @@ public class MonitorFilter extends OncePerRequestFilter {
     String method = request.getMethod();
     String URI = request.getRequestURI();
 
-    LOGGER.info("{} {}", method, URI);
+    LOGGER.debug("{} {}", method, URI);
 
     switch (method) {
       case "GET":
@@ -169,19 +169,7 @@ public class MonitorFilter extends OncePerRequestFilter {
   private String buildSaveCurrentAccountSymbolResponse(
       SpringRequestWrapper request, SpringResponseWrapper response) throws IOException {
     final String statusCode = AbstractionUtils.abstractStatusCode(response.getStatus());
-    String payload = "";
-    try {
-      final Account account =
-          OBJECT_MAPPER.readValue(
-              byteArrayToString(
-                  response.getContentAsByteArray(), response.getCharacterEncoding()),
-              Account.class);
-      payload = AbstractionUtils.abstractAccount(account);
-    } catch (JsonMappingException | JsonParseException e) {
-      LOGGER.error("JsonMappingException | JsonParseException: {}", e.getMessage());
-    }
-
-    return AbstractionUtils.SAVE_CURRENT_ACCOUNT_ABSTRACTION + statusCode + payload;
+    return AbstractionUtils.SAVE_CURRENT_ACCOUNT_ABSTRACTION + statusCode;
   }
 
   private String buildCreateNewAccountSymbolRequest(SpringRequestWrapper request)
