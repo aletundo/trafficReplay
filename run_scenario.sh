@@ -20,6 +20,7 @@ while [[ "$#" -gt 0 ]]; do
         -ni|--no-init) no_init=1 ;;
 		-nb|--no-build) no_build=1 ;;
 		-nt|--no-tracing) no_tracing=1 ;;
+		-l|--latency) latency=1 ;;
         *) echo "Unknown parameter passed: $1"; exit 1 ;;
     esac
     shift
@@ -127,8 +128,13 @@ if [[ -z $no_tracing ]]; then
 	sudo tcpdump -U -i $interface -n "dst host $service_ip or src host $service_ip" -w "./scenarios/$service_name-service/$scenario_name.pcap" &
 fi
 
-# Run scenario
-./scenarios/$service_name-service/$scenario_name.sh $auth_service_ip $service_ip
+if [[ -z $latency ]]; then
+	# Run scenario
+	./scenarios/$service_name-service/$scenario_name.sh $auth_service_ip $service_ip > ./scenarios/$service_name-service/$scenario_name-latecy.log
+else
+	# Run scenario
+	./scenarios/$service_name-service/$scenario_name.sh $auth_service_ip $service_ip
+fi
 
 if [[ -z $no_tracing ]]; then
 	# Kill background tracing process
