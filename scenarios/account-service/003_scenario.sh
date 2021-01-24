@@ -7,14 +7,14 @@ account_service_host=$2
 # and get the current account successfully
 
 sleep 2
-curl -X GET -H "Accept: application/json" http://$account_service_host:6000/accounts/current
+curl -w "%{time_total}\n" --silent -o /dev/null -X GET -H "Accept: application/json" http://$account_service_host:6000/accounts/current
 sleep 5
-curl -X GET -H "Accept: application/json" http://$account_service_host:6000/accounts/current
+curl -w "%{time_total}\n" --silent -o /dev/null -X GET -H "Accept: application/json" http://$account_service_host:6000/accounts/current
 sleep 5
-curl -X GET -H "Accept: application/json" http://$account_service_host:6000/accounts/current
+curl -w "%{time_total}\n" --silent -o /dev/null -X GET -H "Accept: application/json" http://$account_service_host:6000/accounts/current
 sleep 5
-curl -X GET -H "Accept: application/json" http://$account_service_host:6000/accounts/current
+curl -w "%{time_total}\n" --silent -o /dev/null -X GET -H "Accept: application/json" http://$account_service_host:6000/accounts/current
 sleep 5
 token=$(curl -X POST -H "Accept: application/json" -H "Authorization: Basic YnJvd3Nlcjo=" -d "scope=ui&grant_type=password&username=002_scenario&password=password" http://$auth_service_host:5000/uaa/oauth/token | jq -j .access_token)
 sleep 5
-curl -X GET -H "Authorization: Bearer $token" -H "Accept: application/json" http://$account_service_host:6000/accounts/current
+curl -w "%{time_total}\n" --silent -o /dev/null -X GET -H "Authorization: Bearer $token" -H "Accept: application/json" http://$account_service_host:6000/accounts/current
