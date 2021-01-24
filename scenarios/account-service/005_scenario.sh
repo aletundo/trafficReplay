@@ -7,10 +7,10 @@ account_service_host=$2
 # Then, she tries with an already used username. Finally, she complete the registration.
 
 sleep 2
-curl -X POST -d '{"username":"00","password":"password"}' -H "Content-Type: application/json" http://$account_service_host:6000/accounts/
+curl -X POST -d '{"username":"00","password":"password"}' -H "Accept: application/json" -H "Content-Type: application/json" http://$account_service_host:6000/accounts/
 sleep 5
-curl -X POST -d '{"username":"005_scenario_00000000","password":"password"}' -H "Content-Type: application/json" http://$account_service_host:6000/accounts/
+curl -X POST -d '{"username":"005_scenario_00000000","password":"password"}' -H "Accept: application/json" -H "Content-Type: application/json" http://$account_service_host:6000/accounts/
 sleep 5
-curl -X POST -d '{"username":"001_scenario","password":"password"}' -H "Content-Type: application/json" http://$account_service_host:6000/accounts/
+curl -X POST -d '{"username":"001_scenario","password":"password"}' -H "Accept: application/json" -H "Content-Type: application/json" http://$account_service_host:6000/accounts/
 sleep 5
-curl -X POST -d '{"username":"005_scenario","password":"password"}' -H "Content-Type: application/json" http://$account_service_host:6000/accounts/
+curl -X POST -d '{"username":"005_scenario","password":"password"}' -H "Accept: application/json" -H "Content-Type: application/json" http://$account_service_host:6000/accounts/
