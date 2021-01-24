@@ -14,7 +14,7 @@ curl -w "%{time_total}\n" --silent -o /dev/null -X POST -d '{"username":"006_sce
 sleep 5
 curl -w "%{time_total}\n" --silent -o /dev/null -X POST -d '{"username":"006_scenario","password":"password"}' -H "Accept: application/json" -H "Content-Type: application/json" http://$account_service_host:6000/accounts/
 sleep 2
-token=$(curl -X POST -H "Accept: application/json" -H "Authorization: Basic YnJvd3Nlcjo=" -d "scope=ui&grant_type=password&username=006_scenario&password=password" http://$auth_service_host:5000/uaa/oauth/token | jq -j .access_token)
+token=$(curl --silent -X POST -H "Accept: application/json" -H "Authorization: Basic YnJvd3Nlcjo=" -d "scope=ui&grant_type=password&username=006_scenario&password=password" http://$auth_service_host:5000/uaa/oauth/token | jq -j .access_token)
 sleep 2
 curl -w "%{time_total}\n" --silent -o /dev/null -X GET -H "Authorization: Bearer $token" -H "Accept: application/json" http://$account_service_host:6000/accounts/current
 sleep 2

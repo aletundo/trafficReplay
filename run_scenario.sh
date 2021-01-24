@@ -128,7 +128,7 @@ if [[ -z $no_tracing ]]; then
 	sudo tcpdump -U -i $interface -n "dst host $service_ip or src host $service_ip" -w "./scenarios/$service_name-service/$scenario_name.pcap" &
 fi
 
-if [[ -z $latency ]]; then
+if [[ -n $latency ]]; then
 	# Run scenario
 	./scenarios/$service_name-service/$scenario_name.sh $auth_service_ip $service_ip > ./scenarios/$service_name-service/$scenario_name-latecy.log
 else
