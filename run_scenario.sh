@@ -141,4 +141,5 @@ fi
 docker cp "$(docker-compose -f piggymetrics/docker-compose.custom.yml ps -q $service_name-service)":/logs/monitor.log "./scenarios/$service_name-service/$scenario_name.log"
 docker cp "$(docker-compose -f piggymetrics/docker-compose.custom.yml ps -q $service_name-service)":/logs/monitor-debug.log "./scenarios/$service_name-service/$scenario_name-debug.log"
 
-docker-compose -f piggymetrics/docker-compose.custom.yml down
+docker-compose -f piggymetrics/docker-compose.custom.yml exec $service_name-service rm /logs/monitor.log
+docker-compose -f piggymetrics/docker-compose.custom.yml exec $service_name-service rm /logs/monitor-debug.log
