@@ -60,15 +60,15 @@
     <appender-ref ref="Console" />
   </root>
 
-  <!-- LOG "com.piggymetrics.statistics.filter" at INFO level -->
-  <logger name="com.piggymetrics.statistics.filter" level="info" additivity="false">
-    <appender-ref ref="RollingFile" />
+    <!-- LOG "com.piggymetrics.statistics.filter" at DEBUG level -->
+  <logger name="com.piggymetrics.statistics.filter" level="debug" additivity="false">
+    <appender-ref ref="RollingFileDebug" />
     <appender-ref ref="Console" />
   </logger>
 
-    <!-- LOG "com.piggymetrics.statistics.filter" at INFO level -->
-  <logger name="com.piggymetrics.statistics.filter" level="debug" additivity="false">
-    <appender-ref ref="RollingFileDebug" />
+  <!-- LOG "com.piggymetrics.statistics.filter" at INFO level -->
+  <logger name="com.piggymetrics.statistics.filter" level="info" additivity="false">
+    <appender-ref ref="RollingFile" />
     <appender-ref ref="Console" />
   </logger>
 
