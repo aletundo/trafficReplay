@@ -182,6 +182,7 @@ function get_monitor_logs() {
 	docker cp "$(docker-compose -f piggymetrics/docker-compose.custom.yml ps -q $service_name-service)":/logs/monitor.log "./scenarios/$service_name-service/$scenario_name.log"
 	docker cp "$(docker-compose -f piggymetrics/docker-compose.custom.yml ps -q $service_name-service)":/logs/monitor-debug.log "./scenarios/$service_name-service/$scenario_name-debug.log"
 	echo "Done!"
+}
 
 function clean_monitor_logs() {
 	echo "Cleaning monitor logs..."
