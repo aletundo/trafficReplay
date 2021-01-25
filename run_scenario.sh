@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Usage: ./run-scenario.sh -s scenario_name -svc service_name [--no-build] [--no-run] [--monitor] [--trace] [--latency]
+# Usage: ./run_scenario.sh -s scenario_name -svc service_name [--no-build] [--no-run] [--monitor] [--trace] [--latency]
 
 function main() {
 	export CONFIG_SERVICE_PASSWORD="conf_serv"
