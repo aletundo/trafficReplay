@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Usage: ./run-scenario.sh -s scenario_name -svc service_name -p service_port [--no-init] [--no-build] [--no-run] [--monitor] [--trace] [--latency]
+# Usage: ./run-scenario.sh -s scenario_name -svc service_name [--no-build] [--no-run] [--monitor] [--trace] [--latency]
 
 function main() {
 	export CONFIG_SERVICE_PASSWORD="conf_serv"
@@ -9,16 +9,10 @@ function main() {
 	export ACCOUNT_SERVICE_PASSWORD="acc_serv"
 	export MONGODB_PASSWORD="mongo"
 
-	scenario_name=$1
-	service_name=$2
-	service_port=$3
-
 	while [[ "$#" -gt 0 ]]; do
 	    case $1 in
 	        -s|--scenario) scenario_name="$2"; shift ;;
 			-svc|--service) service_name="$2"; shift ;;
-			-p|--port) service_port="$2"; shift ;;
-	        -ni|--no-init) no_init=1 ;;
 			-nb|--no-build) no_build=1 ;;
 	        -nr|--no-run) no_run=1;;
 			-m|--monitor) monitor=1;;
@@ -29,7 +23,7 @@ function main() {
 	    shift
 	done
 
-	rsync --update -raz monitor/docker-compose.custom.yml piggymetrics/
+	rsync --update -raz scenarios/docker-compose.custom.yml piggymetrics/
 
 	if [[ -n $monitor ]]; then
 		copy_monitor_code
@@ -58,23 +52,55 @@ function main() {
 		fi
 	done
 
-	# Retrieve service IP
-	service_ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps | grep piggymetrics_$service_name-service | awk '{print $1}'))
+	# Retrieve account-service IP
+	account_service_ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps | grep piggymetrics_account-service | awk '{print $1}'))
 	count=1
-	while [ -z "$service_ip" ]
+	while [ -z "$account_service_ip" ]
 	do
 		if (( $count > 50 )); then
-			echo "No IP address found for $service_name-service after 50 retries"
+			echo "No IP address found for account-service after 50 retries"
 			exit 1
 		else
 		    sleep 10
-			service_ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps | grep piggymetrics_$service_name-service | awk '{print $1}'))
+			account_service_ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps | grep piggymetrics_account-service | awk '{print $1}'))
+			count=$((count+1))
+		fi
+	done
+
+	# Retrieve statistics-service IP
+	statistics_service_ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps | grep piggymetrics_statistics-service | awk '{print $1}'))
+	count=1
+	while [ -z "$statistics_service_ip" ]
+	do
+		if (( $count > 50 )); then
+			echo "No IP address found for statistics-service after 50 retries"
+			exit 1
+		else
+		    sleep 10
+			statistics_service_ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps | grep piggymetrics_statistics-service | awk '{print $1}'))
+			count=$((count+1))
+		fi
+	done
+
+	# Retrieve notification-service IP
+	notification_service_ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps | grep piggymetrics_notification-service | awk '{print $1}'))
+	count=1
+	while [ -z "$notification_service_ip" ]
+	do
+		if (( $count > 50 )); then
+			echo "No IP address found for statistics-service after 50 retries"
+			exit 1
+		else
+		    sleep 10
+			notification_service_ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps | grep piggymetrics_notification-service | awk '{print $1}'))
 			count=$((count+1))
 		fi
 	done
 
 	echo "auth-service IP: $auth_service_ip"
-	echo "$service_name-service IP: $service_ip"
+	echo "account-service IP: $account_service_ip"
+	echo "statistics-service IP: $statistics_service_ip"
+	echo "notification-service IP: $notification_service_ip"
 
 	# Check services are 'at least' ready to serve
 	if [ -n "$auth_service_ip" ]; then
@@ -86,19 +112,49 @@ function main() {
 		echo "Connected to auth-service"
 	fi
 
-	if [ -n "$service_ip" ]; then
-		printf "Trying to connect to $service_name-service ($service_ip) "
-		until [ $(curl -s -o /dev/null -w "%{http_code}" $service_ip:$service_port) != "000" ]; do
+	if [ -n "$account_service_ip" ]; then
+		printf "Trying to connect to account-service ($account_service_ip) "
+		until [ $(curl -s -o /dev/null -w "%{http_code}" $account_service_ip:6000) != "000" ]; do
 		    printf '.'
 		    sleep 10
 		done
-		echo "Connected to $service_name-service"
+		echo "Connected to account-service"
+	fi
+
+	if [ -n "$statistics_service_ip" ]; then
+		printf "Trying to connect to statistics-service ($statistics_service_ip) "
+		until [ $(curl -s -o /dev/null -w "%{http_code}" $statistics_service_ip:7000) != "000" ]; do
+		    printf '.'
+		    sleep 10
+		done
+		echo "Connected to statistics-service"
+	fi
+
+	if [ -n "$notification_service_ip" ]; then
+		printf "Trying to connect to notification-service ($notification_service_ip) "
+		until [ $(curl -s -o /dev/null -w "%{http_code}" $notification_service_ip:8000) != "000" ]; do
+		    printf '.'
+		    sleep 10
+		done
+		echo "Connected to notification-service"
 	fi
 
 
 	if [[ -z $no_run ]]; then
 		echo "Sleeping for 30s to '''ensure''' warm up of run services"
 		sleep 30
+	fi
+
+	if [[ $service_name == "account" ]]; then
+		service_ip=$account_service_ip
+	elif [[ $service_name == "statistics" ]]; then
+		service_ip=$statistics_service_ip
+	elif [[ $service_name == "notification" ]]; then
+		service_ip=$notification_service_ip
+	fi
+
+	if [[ -n $monitor ]]; then
+		clean_monitor_logs
 	fi
 
 
@@ -108,7 +164,7 @@ function main() {
 
 	echo "Running scenario $scenario_name..."
 	if [[ -n $latency ]]; then
-		echo "Enabled latency long"
+		echo "Enabled latency log"
 		./scenarios/$service_name-service/$scenario_name.sh $auth_service_ip $service_ip > ./scenarios/$service_name-service/$scenario_name-latecy.log
 	else
 		./scenarios/$service_name-service/$scenario_name.sh $auth_service_ip $service_ip
@@ -121,16 +177,23 @@ function main() {
 
 	if [[ -n $monitor ]]; then
 		get_monitor_logs
-		clean_monitor_logs
 	fi
 }
 
 function copy_monitor_code() {
 	echo "Copying monitor instrumentation code..."
 
-	rsync --update -raz "monitor/$service_name-service/filter" "piggymetrics/$service_name-service/src/main/java/com/piggymetrics/account/"
-	rsync --update -raz "monitor/$service_name-service/config/"*.java "piggymetrics/$service_name-service/src/main/java/com/piggymetrics/account/config/"
-	rsync --update -raz "monitor/$service_name-service/logback-spring.xml" "piggymetrics/$service_name-service/src/main/resources/logback-spring.xml"
+	rsync --update -raz "monitor/account-service/filter" "piggymetrics/account-service/src/main/java/com/piggymetrics/account/"
+	rsync --update -raz "monitor/account-service/config/"*.java "piggymetrics/account-service/src/main/java/com/piggymetrics/account/config/"
+	rsync --update -raz "monitor/account-service/logback-spring.xml" "piggymetrics/account-service/src/main/resources/logback-spring.xml"
+
+	rsync --update -raz "monitor/statistics-service/filter" "piggymetrics/statistics-service/src/main/java/com/piggymetrics/statistics/"
+	rsync --update -raz "monitor/statistics-service/config/"*.java "piggymetrics/statistics-service/src/main/java/com/piggymetrics/statistics/config/"
+	rsync --update -raz "monitor/statistics-service/logback-spring.xml" "piggymetrics/statistics-service/src/main/resources/logback-spring.xml"
+
+	rsync --update -raz "monitor/notification-service/filter" "piggymetrics/notification-service/src/main/java/com/piggymetrics/notification/"
+	rsync --update -raz "monitor/notification-service/config/"*.java "piggymetrics/notification-service/src/main/java/com/piggymetrics/notification/config/"
+	rsync --update -raz "monitor/notification-service/logback-spring.xml" "piggymetrics/notification-service/src/main/resources/logback-spring.xml"
 
 	echo "Done!"
 }
@@ -144,7 +207,7 @@ function build_services() {
 	cd ..
 
 	# Build services
-	docker-compose -f piggymetrics/docker-compose.custom.yml build rabbitmq config registry auth-mongodb auth-service "$service_name-service" "$service_name-mongodb"
+	docker-compose -f piggymetrics/docker-compose.custom.yml build
 
 	echo "Done!"
 }
@@ -154,9 +217,9 @@ function run_services() {
 
 	# Run services
 	docker-compose -f piggymetrics/docker-compose.custom.yml up -d config registry
-	docker-compose -f piggymetrics/docker-compose.custom.yml up -d rabbitmq auth-mongodb "$service_name-mongodb"
-	sleep 5
-	docker-compose -f piggymetrics/docker-compose.custom.yml up -d auth-service "$service_name-service"
+	docker-compose -f piggymetrics/docker-compose.custom.yml up -d rabbitmq auth-mongodb account-mongodb notification-mongodb statistics-mongodb
+	sleep 10
+	docker-compose -f piggymetrics/docker-compose.custom.yml up -d auth-service account-service notification-service statistics-service
 
 	echo "Done!"
 }
