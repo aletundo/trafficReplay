@@ -7,7 +7,7 @@ account_service_host=$2
 # A user explore the demo, then she sign-up, login and save the current account
 
 sleep 2
-curl -w "%{time_total}\n" --silent -o /dev/null -X GET http://$account_service_host:6000/accounts/demo
+curl -w "%{time_total}\n" --silent -o /dev/null -X GET -H "Accept: application/json" http://$account_service_host:6000/accounts/demo
 sleep 5
 curl -w "%{time_total}\n" --silent -o /dev/null -X POST -d '{"username":"001_scenario","password":"password"}' -H "Accept: application/json" -H "Content-Type: application/json" http://$account_service_host:6000/accounts/
 sleep 3
