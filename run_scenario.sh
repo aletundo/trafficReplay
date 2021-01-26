@@ -25,9 +25,9 @@ function main() {
 
 	rsync --update -raz scenarios/docker-compose.custom.yml piggymetrics/
 
-	if [[ -n $monitor ]]; then
-		copy_monitor_code
-	fi
+	# if [[ -n $monitor ]]; then
+	# 	copy_monitor_code
+	# fi
 
 	if [[ -z $no_build ]]; then
 		build_services
