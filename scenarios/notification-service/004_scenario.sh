@@ -24,5 +24,5 @@ curl -w "%{time_total}\n" --silent -o /dev/null -X GET -H "Accept: application/j
 sleep 5
 
 curl -w "%{time_total}\n" --silent -o /dev/null -X PUT \
--d '{"accountName":"002_scenario","email":"002_scenario@example.com", "scheduledNotifications":{}' \
+-d '{"accountName":"002_scenario","email":"002_scenario@example.com", "scheduledNotifications":{}}' \
 -H "Authorization: Bearer $token" -H "Accept: application/json" -H "Content-Type: application/json" http://$notification_service_host:8000/notifications/recipients/current
