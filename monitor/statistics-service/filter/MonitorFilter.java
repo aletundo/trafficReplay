@@ -1,6 +1,7 @@
 package com.piggymetrics.statistics.filter;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.piggymetrics.statistics.domain.Account;
@@ -10,8 +11,11 @@ import com.piggymetrics.statistics.filter.utils.wrapper.SpringRequestWrapper;
 import com.piggymetrics.statistics.filter.utils.wrapper.SpringResponseWrapper;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.charset.Charset;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
@@ -32,22 +36,71 @@ public class MonitorFilter extends OncePerRequestFilter {
   private static final String GET_STATISTICS_BY_ACCOUNT_NAME_PATH = "/statistics/{accountName}";
   private static final String SAVE_ACCOUNT_STATISTICS_PATH = "/statistics/{accountName}";
 
+  private final Mode currentMode;
+  private final Map<String, BigDecimal> eventSymbolProbabilities;
+
+  public enum Mode {
+    DEFAULT,
+    LOGGER
+  }
+
+  public MonitorFilter(Mode mode) {
+    super();
+    this.currentMode = mode;
+    this.eventSymbolProbabilities = new HashMap<>();
+    for(int i = 0; i < 36; i++) {
+      eventSymbolProbabilities.put(Integer.toString(i), BigDecimal.valueOf(0.1));
+    }
+    OBJECT_MAPPER
+        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+  }
+
   protected void doFilterInternal(
       HttpServletRequest request, HttpServletResponse response, FilterChain chain)
       throws ServletException, IOException {
 
     final SpringRequestWrapper wrappedRequest = new SpringRequestWrapper(request);
-    LOGGER.info("{}", buildRequestSymbol(wrappedRequest));
+    final String eventSymbolRequest = buildRequestSymbol(wrappedRequest);
+
+    if (Mode.LOGGER.equals(currentMode)) {
+      LOGGER.info("{}", eventSymbolRequest);
+    } else {
+      shouldActivateTracing(eventSymbolRequest);
+    }
 
     final SpringResponseWrapper wrappedResponse = new SpringResponseWrapper(response);
+
     try {
       chain.doFilter(wrappedRequest, wrappedResponse);
     } catch (Exception e) {
       wrappedResponse.setStatus(500);
-      LOGGER.info("{}", buildResponseSymbol(wrappedRequest, wrappedResponse));
+      final String eventSymbolResponse = buildResponseSymbol(wrappedRequest, wrappedResponse);
+      if (Mode.LOGGER.equals(currentMode)) {
+        LOGGER.info("{}", eventSymbolResponse);
+      } else {
+        shouldActivateTracing(eventSymbolResponse);
+      }
       throw e;
     }
-    LOGGER.info("{}", buildResponseSymbol(wrappedRequest, wrappedResponse));
+
+    final String eventSymbolResponse = buildResponseSymbol(wrappedRequest, wrappedResponse);
+
+    if (Mode.LOGGER.equals(currentMode)) {
+      LOGGER.info("{}", eventSymbolResponse);
+    } else {
+      shouldActivateTracing(eventSymbolResponse);
+    }
+
+  }
+
+  private boolean shouldActivateTracing(String symbol) {
+    final BigDecimal rand = BigDecimal.valueOf(Math.random());
+    final BigDecimal eventSymbolProb = eventSymbolProbabilities.get("0");
+
+    if (rand.compareTo(eventSymbolProb) >= 0) {
+      return true;
+    }
+    return false;
   }
 
   private String buildRequestSymbol(SpringRequestWrapper request) throws IOException {
