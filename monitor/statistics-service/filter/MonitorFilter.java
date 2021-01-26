@@ -214,7 +214,7 @@ public class MonitorFilter extends OncePerRequestFilter {
   private String buildSaveAccountStatisticsSymbolResponse(
       SpringRequestWrapper request, SpringResponseWrapper response) throws IOException {
     final String statusCode = AbstractionUtils.abstractStatusCode(response.getStatus());
-    return AbstractionUtils.SAVE_ACCOUNT_STATISTICS_ABSTRACTION + statusCode ;
+    return AbstractionUtils.SAVE_ACCOUNT_STATISTICS_ABSTRACTION + statusCode;
   }
 
   private String inputStreamToString(ServletInputStream inputStream, String characterEncoding)

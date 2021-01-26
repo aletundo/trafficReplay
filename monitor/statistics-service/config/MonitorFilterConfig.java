@@ -1,7 +1,7 @@
 package com.piggymetrics.statistics.config;
 
 import com.piggymetrics.statistics.filter.MonitorFilter;
-import com.piggymetrics.account.filter.MonitorFilter.Mode;
+import com.piggymetrics.statistics.filter.MonitorFilter.Mode;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
