@@ -8,7 +8,7 @@ for (( i = 0; i < $runs; i++ )); do
 
 	sudo systemctl start metricbeat.service
 
-	./run_scenario.sh -s 001_scenario -svc account --latency
+	./run_scenario.sh -s 001_scenario -svc account --no-build --latency
 	./run_scenario.sh -s 002_scenario -svc account --no-build --no-run --latency
 	./run_scenario.sh -s 003_scenario -svc account --no-build --no-run --latency
 	./run_scenario.sh -s 004_scenario -svc account --no-build --no-run --latency
@@ -40,3 +40,6 @@ for (( i = 0; i < $runs; i++ )); do
 
 	docker-compose -f piggymetrics/docker-compose.custom.yml down
 done
+
+docker rmi $(docker images -f "reference=piggymetrics_*" -q)
+
