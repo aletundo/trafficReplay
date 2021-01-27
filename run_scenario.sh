@@ -1,20 +1,13 @@
 #!/bin/bash
 
-# Usage: ./run_scenario.sh -s scenario_name -svc service_name [--no-build] [--no-run] [--monitor] [--trace] [--latency]
+# Usage: ./run_scenario.sh -s scenario_name -svc service_name [--monitor] [--trace] [--latency]
 
 function main() {
-	export CONFIG_SERVICE_PASSWORD="conf_serv"
-	export NOTIFICATION_SERVICE_PASSWORD="not_serv"
-	export STATISTICS_SERVICE_PASSWORD="stat_serv"
-	export ACCOUNT_SERVICE_PASSWORD="acc_serv"
-	export MONGODB_PASSWORD="mongo"
 
 	while [[ "$#" -gt 0 ]]; do
 	    case $1 in
 	        -s|--scenario) scenario_name="$2"; shift ;;
 			-svc|--service) service_name="$2"; shift ;;
-			-nb|--no-build) no_build=1 ;;
-	        -nr|--no-run) no_run=1;;
 			-m|--monitor) monitor=1;;
 			-t|--trace) trace=1 ;;
 			-l|--latency) latency=1 ;;
@@ -22,20 +15,6 @@ function main() {
 	    esac
 	    shift
 	done
-
-	rsync --update -raz scenarios/docker-compose.custom.yml piggymetrics/
-
-	# if [[ -n $monitor ]]; then
-	# 	copy_monitor_code
-	# fi
-
-	if [[ -z $no_build ]]; then
-		build_services
-	fi
-
-	if [[ -z $no_run ]]; then
-		run_services
-	fi
 
 	# Retrieve auth-service IP
 	auth_service_ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps | grep piggymetrics_auth-service | awk '{print $1}'))
@@ -139,12 +118,6 @@ function main() {
 		echo "Connected to notification-service"
 	fi
 
-
-	if [[ -z $no_run ]]; then
-		echo "Sleeping for 30s to '''ensure''' warm up of run services"
-		sleep 30
-	fi
-
 	if [[ $service_name == "account" ]]; then
 		service_ip=$account_service_ip
 	elif [[ $service_name == "statistics" ]]; then
@@ -178,50 +151,6 @@ function main() {
 	if [[ -n $monitor ]]; then
 		get_monitor_logs
 	fi
-}
-
-function copy_monitor_code() {
-	echo "Copying monitor instrumentation code..."
-
-	rsync --update -raz "monitor/account-service/filter" "piggymetrics/account-service/src/main/java/com/piggymetrics/account/"
-	rsync --update -raz "monitor/account-service/config/"*.java "piggymetrics/account-service/src/main/java/com/piggymetrics/account/config/"
-	rsync --update -raz "monitor/account-service/logback-spring.xml" "piggymetrics/account-service/src/main/resources/logback-spring.xml"
-
-	rsync --update -raz "monitor/statistics-service/filter" "piggymetrics/statistics-service/src/main/java/com/piggymetrics/statistics/"
-	rsync --update -raz "monitor/statistics-service/config/"*.java "piggymetrics/statistics-service/src/main/java/com/piggymetrics/statistics/config/"
-	rsync --update -raz "monitor/statistics-service/logback-spring.xml" "piggymetrics/statistics-service/src/main/resources/logback-spring.xml"
-
-	rsync --update -raz "monitor/notification-service/filter" "piggymetrics/notification-service/src/main/java/com/piggymetrics/notification/"
-	rsync --update -raz "monitor/notification-service/config/"*.java "piggymetrics/notification-service/src/main/java/com/piggymetrics/notification/config/"
-	rsync --update -raz "monitor/notification-service/logback-spring.xml" "piggymetrics/notification-service/src/main/resources/logback-spring.xml"
-
-	echo "Done!"
-}
-
-function build_services() {
-	echo "Building services..."
-
-	# Package with maven
-	cd piggymetrics
-	mvn -DskipTests package
-	cd ..
-
-	# Build services
-	docker-compose -f piggymetrics/docker-compose.custom.yml build
-
-	echo "Done!"
-}
-
-function run_services() {
-	echo "Running services..."
-
-	# Run services
-	docker-compose -f piggymetrics/docker-compose.custom.yml up -d config registry
-	docker-compose -f piggymetrics/docker-compose.custom.yml up -d rabbitmq auth-mongodb account-mongodb notification-mongodb statistics-mongodb
-	sleep 10
-	docker-compose -f piggymetrics/docker-compose.custom.yml up -d auth-service account-service notification-service statistics-service
-
-	echo "Done!"
 }
 
 function start_tracing() {
