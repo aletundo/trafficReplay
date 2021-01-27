@@ -1,11 +1,25 @@
 #!/bin/bash
 
+function run_services() {
+	echo "Running services..."
+
+	# Run services
+	docker-compose -f piggymetrics/docker-compose.custom.yml up -d config registry
+	docker-compose -f piggymetrics/docker-compose.custom.yml up -d rabbitmq auth-mongodb account-mongodb notification-mongodb statistics-mongodb
+	sleep 10
+	docker-compose -f piggymetrics/docker-compose.custom.yml up -d auth-service account-service notification-service statistics-service
+
+	echo "Done!"
+
+	echo "Sleeping for 30s to '''ensure''' warm up of run services"
+	sleep 30
+}
+
 runs=$1;
 
 mkdir -p overhead-experiments/baseline
 
 ./prepare_scenario_run.sh
-. ./prepare_scenario_run.sh --source-only
 
 for (( i = 0; i < $runs; i++ )); do
 	if [[ $i > 0 ]]; then
