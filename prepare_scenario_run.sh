@@ -24,6 +24,9 @@ function run_services() {
 	docker-compose -f piggymetrics/docker-compose.custom.yml up -d auth-service account-service notification-service statistics-service
 
 	echo "Done!"
+
+	echo "Sleeping for 30s to '''ensure''' warm up of run services"
+	sleep 30
 }
 
 export CONFIG_SERVICE_PASSWORD="conf_serv"
@@ -49,9 +52,4 @@ fi
 
 if [[ -z $no_run ]]; then
 	run_services
-fi
-
-if [[ -z $no_run ]]; then
-	echo "Sleeping for 30s to '''ensure''' warm up of run services"
-	sleep 30
 fi

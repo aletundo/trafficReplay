@@ -5,8 +5,12 @@ runs=$1;
 mkdir -p overhead-experiments/baseline
 
 ./prepare_scenario_run.sh
+. ./prepare_scenario_run.sh --source-only
 
 for (( i = 0; i < $runs; i++ )); do
+	if [[ $i > 0 ]]; then
+		run_services
+	fi
 
 	sudo systemctl start metricbeat.service
 
