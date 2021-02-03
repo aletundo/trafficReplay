@@ -18,12 +18,15 @@ function run_services() {
 	echo "Done!"
 
 	echo "Sleeping for 30s to '''ensure''' warm up of run services"
-	sleep 30
+	sleep 60
 }
 
 runs=$1;
 
 mkdir -p overhead-experiments/baseline
+
+rm -rf piggymetrics
+git clone https://github.com/sqshq/piggymetrics.git
 
 ./prepare_scenario_run.sh
 
@@ -44,7 +47,7 @@ for (( i = 0; i < $runs; i++ )); do
 	./run_scenario.sh -s 008_scenario -svc account --latency
 
 	mkdir -p overhead-experiments/baseline/account-service/run-$i
-	cp scenarios/account-service/*.log overhead-experiments/baseline/account-service/run-$i/
+	mv scenarios/account-service/*latency.log overhead-experiments/baseline/account-service/run-$i/
 
 	./run_scenario.sh -s 001_scenario -svc statistics --latency
 	./run_scenario.sh -s 002_scenario -svc statistics --latency
@@ -52,7 +55,7 @@ for (( i = 0; i < $runs; i++ )); do
 	./run_scenario.sh -s 004_scenario -svc statistics --latency
 
 	mkdir -p overhead-experiments/baseline/statistics-service/run-$i
-	cp scenarios/statistics-service/*.log overhead-experiments/baseline/statistics-service/run-$i/
+	mv scenarios/statistics-service/*latency.log overhead-experiments/baseline/statistics-service/run-$i/
 
 	./run_scenario.sh -s 001_scenario -svc notification --latency
 	./run_scenario.sh -s 002_scenario -svc notification --latency
@@ -60,7 +63,7 @@ for (( i = 0; i < $runs; i++ )); do
 	./run_scenario.sh -s 004_scenario -svc notification --latency
 
 	mkdir -p overhead-experiments/baseline/notification-service/run-$i
-	cp scenarios/notification-service/*.log overhead-experiments/baseline/notification-service/run-$i/
+	mv scenarios/notification-service/*latency.log overhead-experiments/baseline/notification-service/run-$i/
 
 	sudo systemctl stop metricbeat.service
 

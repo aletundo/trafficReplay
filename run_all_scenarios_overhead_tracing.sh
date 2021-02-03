@@ -18,12 +18,15 @@ function run_services() {
 	echo "Done!"
 
 	echo "Sleeping for 30s to '''ensure''' warm up of run services"
-	sleep 30
+	sleep 60
 }
 
 runs=$1;
 
 mkdir -p overhead-experiments/tracing
+
+rm -rf piggymetrics
+git clone https://github.com/sqshq/piggymetrics.git
 
 ./prepare_scenario_run.sh
 
@@ -44,8 +47,8 @@ for (( i = 0; i < $runs; i++ )); do
 	./run_scenario.sh -s 008_scenario -svc account --trace --latency
 
 	mkdir -p overhead-experiments/tracing/account-service/run-$i
-	cp scenarios/account-service/*.log overhead-experiments/tracing/account-service/run-$i/
-	cp scenarios/account-service/*.pcap overhead-experiments/tracing/account-service/run-$i/
+	mv scenarios/account-service/*latency.log overhead-experiments/tracing/account-service/run-$i/
+	mv scenarios/account-service/*.pcap overhead-experiments/tracing/account-service/run-$i/
 
 	./run_scenario.sh -s 001_scenario -svc statistics --trace --latency
 	./run_scenario.sh -s 002_scenario -svc statistics --trace --latency
@@ -53,8 +56,8 @@ for (( i = 0; i < $runs; i++ )); do
 	./run_scenario.sh -s 004_scenario -svc statistics --trace --latency
 
 	mkdir -p overhead-experiments/tracing/statistics-service/run-$i
-	cp scenarios/statistics-service/*.log overhead-experiments/tracing/statistics-service/run-$i/
-	cp scenarios/statistics-service/*.pcap overhead-experiments/tracing/statistics-service/run-$i/
+	mv scenarios/statistics-service/*latency.log overhead-experiments/tracing/statistics-service/run-$i/
+	mv scenarios/statistics-service/*.pcap overhead-experiments/tracing/statistics-service/run-$i/
 
 	./run_scenario.sh -s 001_scenario -svc notification --trace --latency
 	./run_scenario.sh -s 002_scenario -svc notification --trace --latency
@@ -62,8 +65,8 @@ for (( i = 0; i < $runs; i++ )); do
 	./run_scenario.sh -s 004_scenario -svc notification --trace --latency
 
 	mkdir -p overhead-experiments/tracing/notification-service/run-$i
-	cp scenarios/notification-service/*.log overhead-experiments/tracing/notification-service/run-$i/
-	cp scenarios/notification-service/*.pcap overhead-experiments/tracing/notification-service/run-$i/
+	mv scenarios/notification-service/*latency.log overhead-experiments/tracing/notification-service/run-$i/
+	mv scenarios/notification-service/*.pcap overhead-experiments/tracing/notification-service/run-$i/
 
 	sudo systemctl stop metricbeat.service
 

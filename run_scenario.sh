@@ -138,7 +138,7 @@ function main() {
 	echo "Running scenario $scenario_name..."
 	if [[ -n $latency ]]; then
 		echo "Enabled latency log"
-		./scenarios/$service_name-service/$scenario_name.sh $auth_service_ip $service_ip > ./scenarios/$service_name-service/$scenario_name-latecy.log
+		./scenarios/$service_name-service/$scenario_name.sh $auth_service_ip $service_ip > ./scenarios/$service_name-service/$scenario_name-latency.log
 	else
 		./scenarios/$service_name-service/$scenario_name.sh $auth_service_ip $service_ip
 	fi
