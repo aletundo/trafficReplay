@@ -26,7 +26,7 @@ function run_services() {
 	echo "Done!"
 
 	echo "Sleeping for 30s to '''ensure''' warm up of run services"
-	sleep 30
+	sleep 60
 }
 
 export CONFIG_SERVICE_PASSWORD="conf_serv"
